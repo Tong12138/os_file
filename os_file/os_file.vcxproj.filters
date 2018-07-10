@@ -26,7 +26,34 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="os_file.cpp">
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="set.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="load.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="folder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="delfolder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="assistant.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="user.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="file.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="twinkle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="datablock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

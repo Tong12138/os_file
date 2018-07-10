@@ -1,0 +1,370 @@
+#include"stdafx.h"
+int language = 0;
+
+void print()
+{
+	cout << endl;
+}
+
+void errorprint(string get) {
+	if (language)cout << '\'' << get << '\'' << "不是内部或外部命令，也不是可运行的程序" << endl << "或批处理文件" << endl;
+	else cout << '\'' << get << '\'' << "It is not an internal or external command, nor an executable program" << endl << "or batch file" << endl;
+}
+
+void MainPage()   // 主页信息
+{
+	if (language == 1) {
+		cout << "--------------------------命令行 参数-----------------------------\n";
+		cout << "close file_name                关闭文件\n";
+		cout << "copy name des_director_name    复制文件到指定目录（绝对路径）\n";
+		cout << "create file_name               建立文件\n";
+		cout << "deldir director_name           删除文件夹\n";
+		cout << "delfile file_name              删除文件\n";
+		cout << "dir                          显示当前目录中的子目录和文件\n";
+		cout << "initi                          格式化文件系统\n";
+		cout << "ini director_name              格式化文件夹\n";
+		cout << "logout                         保存结果并退出系统\n";
+		cout << "ltdir                        返回上一级目录\n";
+		cout << "mkdir director_name            建立目录\n";
+		cout << "ntdir director_name          进入下一级目录\n";
+		cout << "open file_name                 打开文件\n";
+		cout << "read file_name                 读文件\n";
+		cout << "rename old_name new_name     重命名\n";
+		cout << "write file_name content        写文件\n";
+		cout << "wrmore file_name content time  向文件写入同一内容多次\n";
+		cout << "help                         帮助信息\n";
+		cout << "lan_choose                   change the language\n";
+	}
+	else
+	{
+		cout << "--------------------------Command list-----------------------------\n";
+		cout << "CLOSE <OP>                     Close the file\n";
+		cout << "COPY NAME DES_DIRECTOR_NAME    Copy files to specified directory (absolute path)\n";
+		cout << "CREATE <OP>                    Create new file\n";
+		cout << "DELDIR <OP>                    Delete folder\n";
+		cout << "DELFILE <OP>                   Delete file\n";
+		cout << "DIR                            Show all file and folder in current index\n";
+		cout << "INITI                          Format current filesystem\n";
+		cout << "INI <OP>                       Format folder\n";
+		cout << "LOGOUT                         Save and logout\n";
+		cout << "LTDIR                          Return to the previous level directory\n";
+		cout << "MKDIR <OP>                     Create new director\n";
+		cout << "NTDIR <OP>                     Open director\n";
+		cout << "OPEN <OP FILE>                 Open file\n";
+		cout << "READ <OP>                      Read file\n";
+		cout << "RENAME OLD_NAME NEW_NAME       Rename\n";
+		cout << "WRITE FILE_NAME CONTENT        Write specific file\n";
+		cout << "WRMORE FILE_NAME CONTENT TIME  Write the same content to a file multiple times\n";
+		cout << "HELP                           Help message\n";
+		cout << "LAN_CHOOSE                     Change the language\n";
+	}
+}
+
+void CurrentDirector()   // 显示当前目录
+{
+	stack<int> temp;
+	folder temp_director = myFileSystem.vector_folder[current_director_index];
+	while (temp_director.last_director != -1)
+	{
+		temp.push(temp_director.id);
+		temp_director = myFileSystem.vector_folder[temp_director.last_director];
+	}
+	temp.push(temp_director.id);
+	while (!temp.empty())
+	{
+		int index = temp.top();
+		cout << myFileSystem.vector_folder[index].name << ">";
+		temp.pop();
+	}
+	//cout<<"$";
+}
+
+void main()
+{
+	//Initialize_path();
+	string command;
+	char ch;
+	cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
+
+	while (1)
+	{
+		if (Load()) {
+			break;
+		}
+		else {
+			Initialize();
+			break;
+		}
+		print();
+	}
+
+	if (LoginIn())
+	{
+		system("cls");
+		cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
+		if (language)cout << "登录成功，欢迎您," << current_user.name << endl;
+		else cout << "Login success, welcome you," << current_user.name << endl;
+	}
+	else
+	{
+		if (language) {
+			cout << "由于您多次登录失败，本系统自动关闭" << endl;
+			cout << "按任意键退出" << endl;
+		}
+		else
+		{
+			cout << "This system will automatically closed because you failed multiple logins" << endl;
+			cout << "Press any key to exit" << endl;
+		}
+		system("pause");
+		exit(0);
+	}
+
+	while (true)
+	{
+
+		print();
+		CurrentDirector();   // 显示当前目录
+		cin >> command;
+		string param;
+
+		if ((command == "mkdir") || (command == "MKDIR"))
+		{
+			cin >> param;
+			mkdir(param);
+			continue;
+		}
+		if ((command == "lan_choose") || (command == "LAN_CHOOSE")) {
+			language_change();
+			continue;
+		}
+		if ((command == "dir") || (command == "DIR"))
+		{
+			dir();
+			continue;
+		}
+		if ((command == "ntdir") || (command == "NTDIR"))
+		{
+			cin >> param;
+			ntdir(param);
+			continue;
+		}
+		if ((command == "ltdir") || (command == "LTDIR"))
+		{
+			ltdir();
+			continue;
+		}
+		if ((command == "create") || (command == "CREATE"))
+		{
+			cin >> param;
+			create(param);
+			continue;
+		}
+		if ((command == "delfile") || (command == "DELFILE"))
+		{
+			cin >> param;
+			delfile(param);
+			continue;
+		}
+		if ((command == "deldir") || (command == "DELDIR"))
+		{
+			cin >> param;
+			deldir(param);
+			continue;
+		}
+		if ((command == "write") || (command == "WRITE"))
+		{
+			cin >> param;
+			string temp;
+			//	cin>>temp;
+			cin.get();
+			getline(std::cin, temp);
+			write(param, temp);
+			continue;
+		}
+		if ((command == "wrmore") || (command == "WRMORE"))
+		{
+			cin >> param;
+			string temp_1;
+
+			//cin>>temp_1;
+			cin.get();
+			getline(std::cin, temp_1);
+			int temp_2;
+			cin >> temp_2;
+			wrmore(param, temp_1, temp_2);
+			continue;
+		}
+		if ((command == "open") || (command == "OPEN"))
+		{
+			cin >> param;
+			open(param);
+			continue;
+		}
+		if ((command == "read") || (command == "READ"))
+		{
+			cin >> param;
+			read(param);
+			continue;
+		}
+		if ((command == "close") || (command == "CLOSE"))
+		{
+			cin >> param;
+			close(param);
+			continue;
+		}
+		if ((command == "logout") || (command == "LOGOUT"))
+		{
+			LoginOut();
+			system("pause");
+			exit(0);
+		}
+		bool initi(string director_name);  // 格式化文件夹
+		if ((command == "initi") || (command == "INITI"))
+		{
+			Initialize();
+			continue;
+		}
+		if ((command == "rename") || (command == "RENAME"))
+		{
+			cin >> param;
+			string str;
+			cin >> str;
+
+			rename(param, str);
+			continue;
+		}
+		if ((command == "ini") || (command == "INI"))
+		{
+			cin >> param;
+			initi(param);
+			continue;
+		}
+		if ((command == "copy") || (command == "COPY"))
+		{
+			cin >> param;
+			string str;
+			cin >> str;
+			copy(param, str);
+			continue;
+		}
+		if ((command == "help") || (command == "HELP")) {
+			MainPage();
+			continue;
+		}
+		if ((command == "root") || (command == "ROOT")) {
+			root();
+			continue;
+		}
+		errorprint(command);
+		while (1)    // 过滤掉剩余指令
+		{
+			char ch;
+			ch = getchar();
+			if (ch == '\n')
+			{
+				break;
+			}
+		}
+	}
+
+	system("pause");
+}
+
+void read() {//管理员，设置注册账户
+	if (language) {
+		cout << "--------------------------command list-----------------------------\n";
+		cout << "register                       注册用户\n";
+		cout << "logout                         管理员注销\n";
+		cout << "help                           帮助信息\n";
+	}
+	else
+	{
+		cout << "--------------------------command list-----------------------------\n";
+		cout << "REGISTER                       Registered users\n";
+		cout << "LOGOUT                         Administrator cancellation\n";
+		cout << "HELP                           Help message\n";
+	}
+}
+
+void reg(string name, string password) {
+	if (UCount == 8) {
+		if (language) cout << "注册人数已达八个，禁止继续注册。" << endl;
+		else cout << "The number of registered people has reached eight, and the registration is prohibited." << endl;
+		print();
+		return;
+	}
+	user add;
+	add.name = name;
+	add.password = password;
+	myFileSystem.user_info[UCount++] = add;
+}
+
+void deleteuser(string name) {
+
+}
+
+bool rootok() {
+	while (true)
+	{
+
+		if (language)cout << "请输入指令" << endl;
+		else cout << "Please input instruction:";
+		string ins;
+		cin >> ins;
+		if ((ins == "register") || (ins == "REGISTER")) {
+			string user_name;
+			if (language)cout << "请输入用户名:";
+			else cout << "Please enter the username:";
+			cin >> user_name;
+			string user_password;
+			if (language)cout << "请输入密码:";
+			else cout << "Please enter your password:";
+			cin >> user_password;
+			reg(user_name, user_password);
+			continue;
+		}
+		if ((ins == "LOGOUT") || (ins == "logout")) {
+			return true;
+		}
+		if ((ins == "help") || (ins == "HELP")) {
+			read();
+			continue;
+		}
+		system("cls");
+		cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
+		if (language)cout << "Error instruction, please re-enter" << endl;
+		else cout << "错误指令，请重新输入" << endl;
+	}
+	return false;
+}
+
+void root() {
+	system("cls");
+	cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
+	print();
+	int key;
+
+	int no = 5;
+	while (no > 0) {
+		if (language)cout << "请输入管理员授权码" << endl;
+		else cout << "Please enter the administrator authorization code" << endl;
+		cin >> key;
+		if (key == 123456) {
+			read();
+			if (rootok())
+				return;
+			else continue;
+			continue;
+		}
+		system("cls");
+		cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
+		print();
+		if (language)cout << "输入错误，请重新输入,你还有 " << --no << " 次机会" << endl;
+		else cout << "Enter the error, please re-enter, you still have " << --no << " second chance" << endl;;
+	}
+	if (language)cout << "输入错误已超过五次，将强制退出系统" << endl;
+	else cout << "The input error has been exceeded five times and the system will be forced out" << endl;
+	LoginOut();
+	return;
+}
