@@ -74,19 +74,19 @@ void CopyDirector(int pos, int limit)   //复制pos处的目录
 	temp.time = gettime();
 	temp.last_director = current_director_index;   //更新last_director
 
-	list<int>::iterator p = current.file_list.begin();  //文件的索引相同  
-	while (p != current.file_list.end())
+	vector<int>::iterator p = current.FV.begin();  //文件的索引相同  
+	while (p != current.FV.end())
 	{
-		temp.file_list.push_back(*p);
+		temp.FV.push_back(*p);
 		p++;
 	}
 
-	myFileSystem.vector_folder[current_director_index].director_list.push_back(temp.id);  // 在当前目录中加入新的目录
+	myFileSystem.vector_folder[current_director_index].DV.push_back(temp.id);  // 在当前目录中加入新的目录
 	myFileSystem.vector_folder.push_back(temp);//在目录信息中加入新的目录
 	current_director_index = temp.id;	//更新当前目录
 
-	p = current.director_list.begin();  // 在当前目录的子目录中继续复制
-	while (p != current.director_list.end())
+	p = current.DV.begin();  // 在当前目录的子目录中继续复制
+	while (p != current.DV.end())
 	{
 		if (*p != -1 && *p < limit)
 		{
@@ -166,7 +166,7 @@ bool copy(string name, string path)
 			else cout << "Duplicate failure!" << endl;
 			return false;
 		}
-		myFileSystem.vector_folder[current_director_index].file_list.push_back(pos);     //在该目录下添加对应文件的索引即可
+		myFileSystem.vector_folder[current_director_index].FV.push_back(pos);     //在该目录下添加对应文件的索引即可
 	}
 
 	if (language)cout << "复制成功！" << endl;
@@ -210,7 +210,7 @@ bool rename(string old_name, string new_name)  // 重命名
 	int pos = IsFileInCurrentDirector(old_name);
 	if (pos != -1)  // 如果要重命名的是文件
 	{
-		myFileSystem.vector_file[pos].file_name = new_name;
+		myFileSystem.vector_file[pos].filename = new_name;
 		if (language) cout << "重命名成功！" << endl;
 		else  cout << "Rename success！" << endl;
 		return true;

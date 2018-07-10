@@ -25,7 +25,7 @@ bool LoadVectorDirector(FILE* fd, int director_num)  //加载目录信息
 		{
 			int director_index;
 			fscanf_s(fd, "%d", &director_index);
-			temp.director_list.push_back(director_index);
+			temp.DV.push_back(director_index);
 		}
 		int file_count;
 		fscanf_s(fd, "%d", &file_count);
@@ -33,7 +33,7 @@ bool LoadVectorDirector(FILE* fd, int director_num)  //加载目录信息
 		{
 			int file_index;
 			fscanf_s(fd, "%d", &file_index);
-			temp.file_list.push_back(file_index);
+			temp.FV.push_back(file_index);
 		}
 		myFileSystem.vector_folder.push_back(temp);
 	}
@@ -48,8 +48,8 @@ bool LoadVectorFile(FILE* fd, int file_num)  //加载文件信息
 	{
 		file temp;
 		fscanf_s(fd, "%d%s", &temp.id, change, BUFF_LENGTH);
-		temp.file_name = change;
-		fscanf_s(fd, "%d%s", &temp.beginning_in_dataArea, change, BUFF_LENGTH);
+		temp.filename = change;
+		fscanf_s(fd, "%d%s", &temp.firstpos, change, BUFF_LENGTH);
 		temp.owner = change;
 		fscanf_s(fd, "%d%d", &temp.file_length, &temp.begining_in_memory);
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);

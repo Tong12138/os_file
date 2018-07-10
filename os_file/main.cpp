@@ -15,11 +15,11 @@ void MainPage()   // 主页信息
 {
 	if (language == 1) {
 		cout << "--------------------------命令行 参数-----------------------------\n";
-		cout << "close file_name                关闭文件\n";
+		cout << "close filename                关闭文件\n";
 		cout << "copy name des_director_name    复制文件到指定目录（绝对路径）\n";
-		cout << "create file_name               建立文件\n";
+		cout << "create filename               建立文件\n";
 		cout << "deldir director_name           删除文件夹\n";
-		cout << "delfile file_name              删除文件\n";
+		cout << "delfile filename              删除文件\n";
 		cout << "dir                          显示当前目录中的子目录和文件\n";
 		cout << "initi                          格式化文件系统\n";
 		cout << "ini director_name              格式化文件夹\n";
@@ -27,11 +27,11 @@ void MainPage()   // 主页信息
 		cout << "ltdir                        返回上一级目录\n";
 		cout << "mkdir director_name            建立目录\n";
 		cout << "ntdir director_name          进入下一级目录\n";
-		cout << "open file_name                 打开文件\n";
-		cout << "read file_name                 读文件\n";
+		cout << "open filename                 打开文件\n";
+		cout << "read filename                 读文件\n";
 		cout << "rename old_name new_name     重命名\n";
-		cout << "write file_name content        写文件\n";
-		cout << "wrmore file_name content time  向文件写入同一内容多次\n";
+		cout << "write filename content        写文件\n";
+		cout << "wrmore filename content time  向文件写入同一内容多次\n";
 		cout << "help                         帮助信息\n";
 		cout << "lan_choose                   change the language\n";
 	}
@@ -53,8 +53,8 @@ void MainPage()   // 主页信息
 		cout << "OPEN <OP FILE>                 Open file\n";
 		cout << "READ <OP>                      Read file\n";
 		cout << "RENAME OLD_NAME NEW_NAME       Rename\n";
-		cout << "WRITE FILE_NAME CONTENT        Write specific file\n";
-		cout << "WRMORE FILE_NAME CONTENT TIME  Write the same content to a file multiple times\n";
+		cout << "WRITE filename CONTENT        Write specific file\n";
+		cout << "WRMORE filename CONTENT TIME  Write the same content to a file multiple times\n";
 		cout << "HELP                           Help message\n";
 		cout << "LAN_CHOOSE                     Change the language\n";
 	}

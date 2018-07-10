@@ -40,8 +40,8 @@ void mkdir(string director_name)    // 创建目录
 	temp.time = gettime();
 	myFileSystem.vector_folder.push_back(temp);
 	/*
-	list<int>::iterator p = myFileSystem.vector_director[current_director_index].director_list.begin();
-	while(p != myFileSystem.vector_director[current_director_index].director_list.end())
+	list<int>::iterator p = myFileSystem.vector_director[current_director_index].DV.begin();
+	while(p != myFileSystem.vector_director[current_director_index].DV.end())
 	{
 	int index = *p;
 	if(index == -1)
@@ -52,7 +52,7 @@ void mkdir(string director_name)    // 创建目录
 	}
 	}
 	*/
-	myFileSystem.vector_folder[current_director_index].director_list.push_back(temp.id);
+	myFileSystem.vector_folder[current_director_index].DV.push_back(temp.id);
 	if (language) cout << "创建目录 " << director_name << " 成功" << endl;
 	else  cout << "Create a folder " << director_name << " success" << endl;
 	return;
@@ -60,8 +60,8 @@ void mkdir(string director_name)    // 创建目录
 
 bool ntdir(string director_name)
 {
-	list<int>::iterator p = myFileSystem.vector_folder[current_director_index].director_list.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].director_list.end())
+	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].DV.begin();
+	while (p != myFileSystem.vector_folder[current_director_index].DV.end())
 	{
 		int index = *p;
 		if (myFileSystem.vector_folder[index].name == director_name) // 检查目录名

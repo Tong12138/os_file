@@ -1,11 +1,11 @@
 #include "stdafx.h"
-int IsFileInCurrentDirector(string file_name)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â¼µÄ×ÓÎÄ¼şÖĞ  Èô´æÔÚ·µ»Ø¶ÔÓ¦Ë÷ÒıºÅ ²»´æÔÚ·µ»Ø-1
+int IsFileInCurrentDirector(string filename)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â¼µÄ×ÓÎÄ¼şÖĞ  Èô´æÔÚ·µ»Ø¶ÔÓ¦Ë÷ÒıºÅ ²»´æÔÚ·µ»Ø-1
 {
-	list<int>::iterator p = myFileSystem.vector_folder[current_director_index].file_list.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].file_list.end())
+	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].FV.begin();
+	while (p != myFileSystem.vector_folder[current_director_index].FV.end())
 	{
 		int index = *p;
-		if (index != -1 && myFileSystem.vector_file[index].file_name == file_name)
+		if (index != -1 && myFileSystem.vector_file[index].filename == filename)
 		{
 
 			return index;
@@ -16,16 +16,16 @@ int IsFileInCurrentDirector(string file_name)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â
 	return -1;
 }
 
-int IsDirectorInCurrentDirector(string file_name)  // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚµÄµ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼ÖĞ
+int IsDirectorInCurrentDirector(string filename)  // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚµÄµ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼ÖĞ
 {
 	bool flag = false;
-	list<int>::iterator p;
+	vector<int>::iterator p;
 
-	p = myFileSystem.vector_folder[current_director_index].director_list.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].director_list.end())
+	p = myFileSystem.vector_folder[current_director_index].DV.begin();
+	while (p != myFileSystem.vector_folder[current_director_index].DV.end())
 	{
 		int index = *p;
-		if (index != -1 && myFileSystem.vector_folder[index].name == file_name)
+		if (index != -1 && myFileSystem.vector_folder[index].name == filename)
 		{
 
 			return index;
@@ -47,31 +47,31 @@ bool IsDataAreaFull()   // ÅĞ¶ÏÊı¾İÓòÊÇ·ñÒÑÂú
 	}
 }
 
-bool create(string file_name)         // ´´½¨ÎÄ¼ş
+bool create(string filename)         // ´´½¨ÎÄ¼ş
 {
-	if (IsFileInCurrentDirector(file_name) != -1)
+	if (IsFileInCurrentDirector(filename) != -1)
 	{
 		if (language) {
-			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << file_name << " µÄÎÄ¼ş" << endl;
+			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << filename << " µÄÎÄ¼ş" << endl;
 			cout << "ÎÄ¼ş´´½¨Ê§°Ü" << endl;
 		}
 		else
 		{
-			cout << "There is already a name in this directory " << file_name << " file" << endl;
+			cout << "There is already a name in this directory " << filename << " file" << endl;
 			cout << "Failed file creation" << endl;
 		}
 		return false;
 	}
 
-	if (IsDirectorInCurrentDirector(file_name) != -1)
+	if (IsDirectorInCurrentDirector(filename) != -1)
 	{
 		if (language) {
-			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << file_name << " µÄÎÄ¼ş¼Ğ" << endl;
+			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << filename << " µÄÎÄ¼ş¼Ğ" << endl;
 			cout << "ÎÄ¼ş¼Ğ´´½¨Ê§°Ü" << endl;
 		}
 		else
 		{
-			cout << "There is already a name in this directory " << file_name << " folder" << endl;
+			cout << "There is already a name in this directory " << filename << " folder" << endl;
 			cout << "Failed folder creation" << endl;
 		}
 
@@ -89,32 +89,32 @@ bool create(string file_name)         // ´´½¨ÎÄ¼ş
 	temp.id = myFileSystem.vector_file.size();
 	temp.file_length = 1;
 	temp.owner = current_user.name;
-	temp.file_name = file_name;
+	temp.filename = filename;
 	temp.begining_in_memory = 0;
 	temp.time = gettime();
-	temp.beginning_in_dataArea = AllocDataBlock();
-	if (language) cout << "¸ÃÎÄ¼ş±»·ÖÅäµÄÊı¾İ¿éºÅÊÇ: " << temp.beginning_in_dataArea << endl;
-	else  cout << "The data block number that the file is assigned is: " << temp.beginning_in_dataArea << endl;
+	temp.firstpos = AllocDataBlock();
+	if (language) cout << "¸ÃÎÄ¼ş±»·ÖÅäµÄÊı¾İ¿éºÅÊÇ: " << temp.firstpos << endl;
+	else  cout << "The data block number that the file is assigned is: " << temp.firstpos << endl;
 	myFileSystem.vector_file.push_back(temp);
-	myFileSystem.vector_folder[current_director_index].file_list.push_back(temp.id);
+	myFileSystem.vector_folder[current_director_index].FV.push_back(temp.id);
 	return true;
 }
 
-bool close(string file_name)
+bool close(string filename)
 {
-	int pos = IsFileInCurrentDirector(file_name);
+	int pos = IsFileInCurrentDirector(filename);
 
 	if (pos == -1)
 	{
-		if (language)cout << "µ±Ç°Ä¿Â¼²»´æÔÚ " << file_name << " ÎÄ¼ş" << endl;
-		else cout << "The current directory does not exist " << file_name << " file" << endl;
+		if (language)cout << "µ±Ç°Ä¿Â¼²»´æÔÚ " << filename << " ÎÄ¼ş" << endl;
+		else cout << "The current directory does not exist " << filename << " file" << endl;
 		if (language)cout << "¶ÁÎÄ¼şÊ§°Ü£¡" << endl;
 		else cout << "read file failed" << endl;
 		return false;
 	}
 
 	list<openFile>::iterator open_file_p = IsInOpenFileList(pos);
-	if (open_file_p == open_file_list.end())   // ¼ì²éÎÄ¼şÊÇ·ñÒÑ´ò¿ª
+	if (open_file_p == open_FV.end())   // ¼ì²éÎÄ¼şÊÇ·ñÒÑ´ò¿ª
 	{
 		if (language)cout << "¸ÃÎÄ¼ş»¹Î´´ò¿ª£¬ÎŞ·¨¹Ø±Õ" << endl;
 		else cout << "The file is not open and cannot be closed" << endl;
@@ -137,17 +137,17 @@ bool close(string file_name)
 
 		}
 	}
-	open_file_list.erase(open_file_p);   //´Ó´ò¿ªÁ´±íÖĞÉ¾³ı
-	if (language) cout << "¹Ø±ÕÎÄ¼ş " << file_name << " ³É¹¦" << endl;
-	else cout << "close the file: " << file_name << " success" << endl;
+	open_FV.erase(open_file_p);   //´Ó´ò¿ªÁ´±íÖĞÉ¾³ı
+	if (language) cout << "¹Ø±ÕÎÄ¼ş " << filename << " ³É¹¦" << endl;
+	else cout << "close the file: " << filename << " success" << endl;
 	return true;
 
 }
 
-bool delfile(string file_name) //É¾³ıÎÄ¼ş
+bool delfile(string filename) //É¾³ıÎÄ¼ş
 {
 
-	int pos = IsFileInCurrentDirector(file_name);
+	int pos = IsFileInCurrentDirector(filename);
 	if (pos == -1)
 	{
 		if (language) cout << "µ±Ç°Ä¿Â¼ÖĞ²»°üº¬¸ÃÎÄ¼ş£¬É¾³ıÊ§°Ü" << endl;
@@ -162,11 +162,11 @@ bool delfile(string file_name) //É¾³ıÎÄ¼ş
 		return false;
 	}
 
-	list<int>::iterator p_list = myFileSystem.vector_folder[current_director_index].file_list.begin();
-	while (p_list != myFileSystem.vector_folder[current_director_index].file_list.end())
+	vector<int>::iterator p_list = myFileSystem.vector_folder[current_director_index].FV.begin();
+	while (p_list != myFileSystem.vector_folder[current_director_index].FV.end())
 	{
 		int index = *p_list;
-		if (index != -1 && myFileSystem.vector_file[index].file_name == file_name)
+		if (index != -1 && myFileSystem.vector_file[index].filename == filename)
 		{
 			*p_list = -1;   // ±êÊ¾Îª²»¿ÉÓÃ
 			ReleaseDataBlock(index);
@@ -180,23 +180,23 @@ bool delfile(string file_name) //É¾³ıÎÄ¼ş
 	//p += pos;
 	//(*p).id = -1;      //±êÊ¾Îª²»¿ÉÓÃ
 	//myFileSystem.vector_file.erase(p);  // ´ÓÎÄ¼şË÷ÒıÖĞÉ¾³ı
-	if (language) cout << "É¾³ıÎÄ¼ş " << file_name << " ³É¹¦" << endl;
-	else  cout << "Delete the file " << file_name << " success" << endl;
+	if (language) cout << "É¾³ıÎÄ¼ş " << filename << " ³É¹¦" << endl;
+	else  cout << "Delete the file " << filename << " success" << endl;
 	return true;
 }
 
-bool open(string file_name)
+bool open(string filename)
 {
-	int pos = IsFileInCurrentDirector(file_name);
+	int pos = IsFileInCurrentDirector(filename);
 	if (pos == -1)
 	{
 		if (language) {
-			cout << "µ±Ç°Ä¿Â¼ÖĞ²»´æÔÚÎÄ¼ş " << file_name << endl;
+			cout << "µ±Ç°Ä¿Â¼ÖĞ²»´æÔÚÎÄ¼ş " << filename << endl;
 			cout << "´ò¿ªÊ§°Ü£¡" << endl;
 		}
 		else
 		{
-			cout << "There is no file in the current directory " << file_name << endl;
+			cout << "There is no file in the current directory " << filename << endl;
 			cout << "Open the failure£¡" << endl;
 		}
 		return false;
@@ -211,13 +211,13 @@ bool open(string file_name)
 
 	if (myFileSystem.vector_file[pos].file_length > SYSOPENFILE - memory_index)  // Ê£ÓàÎÄ¼ş¿é²»¹»×°ÔØÒª´ò¿ªµÄÎÄ¼ş
 	{
-		if (language)cout << "ÄÚ´æ¿Õ¼ä²»×ã£¬ÎŞ·¨¶ÁÈë " << file_name << " ÄÚÈİ,Çë¹Ø±ÕÎŞÓÃÎÄ¼ş" << endl;
-		else cout << "Insufficient memory space, unable to read in " << file_name << " Please close useless files" << endl;
+		if (language)cout << "ÄÚ´æ¿Õ¼ä²»×ã£¬ÎŞ·¨¶ÁÈë " << filename << " ÄÚÈİ,Çë¹Ø±ÕÎŞÓÃÎÄ¼ş" << endl;
+		else cout << "Insufficient memory space, unable to read in " << filename << " Please close useless files" << endl;
 		return false;
 	}
 
 
-	if (IsInOpenFileList(pos) != open_file_list.end())   // ¼ì²éÊÇ·ñÒÑ´ò¿ª
+	if (IsInOpenFileList(pos) != open_FV.end())   // ¼ì²éÊÇ·ñÒÑ´ò¿ª
 	{
 		if (language)cout << "±¾ÎÄ¼şÒÑ´ò¿ª£¬ÇëÎğÖØ¸´´ò¿ª" << endl;
 		else cout << "This file has been opened. Do not open it again" << endl;
@@ -227,9 +227,9 @@ bool open(string file_name)
 	openFile temp;
 	temp.file_index = pos;
 	temp.director_index = current_director_index;
-	open_file_list.push_back(temp);       // ¼ÓÈë´ò¿ªÎÄ¼şÁ´±í
+	open_FV.push_back(temp);       // ¼ÓÈë´ò¿ªÎÄ¼şÁ´±í
 
-	int block_pos = myFileSystem.vector_file[pos].beginning_in_dataArea;
+	int block_pos = myFileSystem.vector_file[pos].firstpos;
 	myFileSystem.vector_file[pos].begining_in_memory = memory_index; // Éè¶¨ÆğÊ¼Î»ÖÃ
 	dataBlock block;
 	int count = 0;
@@ -258,24 +258,24 @@ bool open(string file_name)
 		}
 	}
 	if (language) {
-		cout << "´ò¿ªÎÄ¼ş " << file_name << " ³É¹¦!" << endl;
+		cout << "´ò¿ªÎÄ¼ş " << filename << " ³É¹¦!" << endl;
 		cout << "¹²¶ÁÈëÄÚ´æ " << count << " ¸ö×Ö½Ú" << endl;
 	}
 	else
 	{
-		cout << "Open the file " << file_name << " success!" << endl;
+		cout << "Open the file " << filename << " success!" << endl;
 		cout << "Co-reading memory " << count << " bytes" << endl;
 	}
 	return true;
 
 }
 
-list<openFile> open_file_list;
+list<openFile> open_FV;
 
 list<openFile>::iterator IsInOpenFileList(int pos)   // posË÷ÒıµÄÎÄ¼şÊÇ·ñÔÚ´ò¿ªÎÄ¼şÁ´±íÖĞ
 {
-	list<openFile>::iterator p = open_file_list.begin();
-	while (p != open_file_list.end())
+	list<openFile>::iterator p = open_FV.begin();
+	while (p != open_FV.end())
 	{
 		int index = (*p).file_index;
 		if (index == pos)
@@ -287,24 +287,24 @@ list<openFile>::iterator IsInOpenFileList(int pos)   // posË÷ÒıµÄÎÄ¼şÊÇ·ñÔÚ´ò¿ªÎ
 	return p;
 }
 
-bool read(string file_name)
+bool read(string filename)
 {
-	int pos = IsFileInCurrentDirector(file_name);
+	int pos = IsFileInCurrentDirector(filename);
 	if (pos == -1)
 	{
 		if (language) {
-			cout << "µ±Ç°Ä¿Â¼²»´æÔÚ " << file_name << " ÎÄ¼ş" << endl;
+			cout << "µ±Ç°Ä¿Â¼²»´æÔÚ " << filename << " ÎÄ¼ş" << endl;
 			cout << "¶ÁÎÄ¼şÊ§°Ü£¡" << endl;
 		}
 		else {
-			cout << "The current directory does not exist " << file_name << " file" << endl;
+			cout << "The current directory does not exist " << filename << " file" << endl;
 			cout << "Failed to read file£¡" << endl;
 		}
 
 		return false;
 	}
 
-	if (IsInOpenFileList(pos) == open_file_list.end())   // ¼ì²éÎÄ¼şÊÇ·ñÒÑ´ò¿ª
+	if (IsInOpenFileList(pos) == open_FV.end())   // ¼ì²éÎÄ¼şÊÇ·ñÒÑ´ò¿ª
 	{
 		if (language) cout << "¸ÃÎÄ¼ş»¹Î´´ò¿ª£¬ÎŞ·¨¶ÁÈ¡" << endl;
 		else  cout << "The file is not open and cannot be read" << endl;
@@ -336,18 +336,18 @@ bool read(string file_name)
 
 }
 
-bool write(string file_name, string content)
+bool write(string filename, string content)
 {
-	int pos = IsFileInCurrentDirector(file_name);
+	int pos = IsFileInCurrentDirector(filename);
 	if (pos == -1)
 	{
 		if (language) {
-			cout << "µ±Ç°Ä¿Â¼ÖĞÃ»ÓĞ " << file_name << " ÎÄ¼ş" << endl;
+			cout << "µ±Ç°Ä¿Â¼ÖĞÃ»ÓĞ " << filename << " ÎÄ¼ş" << endl;
 			cout << "Ğ´ÈëÊ§°Ü" << endl;
 		}
 		else
 		{
-			cout << "There is no current directory " << file_name << " file" << endl;
+			cout << "There is no current directory " << filename << " file" << endl;
 			cout << "Write failed" << endl;
 		}
 		return false;
@@ -355,7 +355,7 @@ bool write(string file_name, string content)
 
 	if (content != "")  // Ğ´ÈëµÄÄÚÈİ²»¿ÕÊ±
 	{
-		int block_pos = myFileSystem.vector_file[pos].beginning_in_dataArea;
+		int block_pos = myFileSystem.vector_file[pos].firstpos;
 		dataBlock* block = &myFileSystem.dataArea[block_pos];
 		while ((*block).next != -1)            // ÕÒµ½×îºóÒ»¿éÊı¾İ¿é ¿ªÊ¼Ğ´ÄÚÈİ
 		{
@@ -419,12 +419,12 @@ bool write(string file_name, string content)
 	return false;
 }
 
-bool wrmore(string file_name, string content, int time)  // Í¬Ò»·İÄÚÈİĞ´Èë¶à´Î
+bool wrmore(string filename, string content, int time)  // Í¬Ò»·İÄÚÈİĞ´Èë¶à´Î
 {
 	bool flag = false;
 	for (int i = 0; i<time; i++)
 	{
-		flag = write(file_name, content);
+		flag = write(filename, content);
 	}
 	return flag;
 }

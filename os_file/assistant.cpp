@@ -3,9 +3,9 @@
 #include <sstream>
 void dir()
 {
-	list<int>::iterator director_p = myFileSystem.vector_folder[current_director_index].director_list.begin();
+	vector<int>::iterator director_p = myFileSystem.vector_folder[current_director_index].DV.begin();
 	cout << endl << "<DIR LIST>:" << endl;
-	while (director_p != myFileSystem.vector_folder[current_director_index].director_list.end())
+	while (director_p != myFileSystem.vector_folder[current_director_index].DV.end())
 	{
 		int index = *director_p;
 		if (index != -1)      // 如果可用
@@ -16,14 +16,14 @@ void dir()
 		director_p++;
 	}
 	cout << endl;
-	list<int>::iterator file_p = myFileSystem.vector_folder[current_director_index].file_list.begin();
+	vector<int>::iterator file_p = myFileSystem.vector_folder[current_director_index].FV.begin();
 	cout << "<FILE LIST>:" << endl;
-	while (file_p != myFileSystem.vector_folder[current_director_index].file_list.end())
+	while (file_p != myFileSystem.vector_folder[current_director_index].FV.end())
 	{
 		int index = *file_p;
 		if (index != -1)  //如果可用
 		{
-			cout << '\t' << myFileSystem.vector_file[index].time << "\t<FILE>" << '\t' << "name: " << myFileSystem.vector_file[index].file_name << '\t' << "owner: ";
+			cout << '\t' << myFileSystem.vector_file[index].time << "\t<FILE>" << '\t' << "name: " << myFileSystem.vector_file[index].filename << '\t' << "owner: ";
 			cout << myFileSystem.vector_file[index].owner << endl;
 		}
 		file_p++;

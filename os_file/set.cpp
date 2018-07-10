@@ -146,7 +146,7 @@ bool Initialize()  // 初始化
 		Initialize_Vector_Director();   // 初始化文件夹信息
 
 		current_director_index = 0;
-		open_file_list.clear();
+		open_FV.clear();
 		myFileSystem.vector_file.clear();
 
 		Initialize_dataBlock();		 // 初始化数据块

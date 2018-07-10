@@ -70,9 +70,9 @@ bool LoginIn()    //登录模块
  3.char* owner
  4.int last_director
  5.int director数目
- 6.int director_list
+ 6.int DV
  7.int file数目
- 8.int file_list
+ 8.int FV
  */
 bool SaveVectorDirector(FILE* fd)  //保存目录信息
 {
@@ -80,21 +80,21 @@ bool SaveVectorDirector(FILE* fd)  //保存目录信息
 
 	while (p != myFileSystem.vector_folder.end())
 	{
-		int director_num = (*p).director_list.size();
-		int file_num = (*p).file_list.size();
+		int director_num = (*p).DV.size();
+		int file_num = (*p).FV.size();
 
 		fprintf(fd, "%d\n%s\n%s\n%d\n%d\n%s\n", (*p).id, (*p).name.c_str(), (*p).owner.c_str(), (*p).last_director, director_num, (*p).time.c_str());
 
-		list<int>::iterator p_list = (*p).director_list.begin();  // 写入director_list
-		while (p_list != (*p).director_list.end())
+		vector<int>::iterator p_list = (*p).DV.begin();  // 写入DV
+		while (p_list != (*p).DV.end())
 		{
 			fprintf(fd, "%d\n", (*p_list));
 			p_list++;
 		}
 
 		fprintf(fd, "%d\n", file_num);
-		p_list = (*p).file_list.begin();          // 写入file_list
-		while (p_list != (*p).file_list.end())
+		p_list = (*p).FV.begin();          // 写入FV
+		while (p_list != (*p).FV.end())
 		{
 			fprintf(fd, "%d\n", (*p_list));
 			p_list++;
@@ -110,8 +110,8 @@ bool SaveVectorDirector(FILE* fd)  //保存目录信息
 
 /*保存格式
 1.int id
-2.char* file_name
-3.int beginning_in_dataarea
+2.char* filename
+3.int firstpos
 4.char* owner
 5.int file_length
 6.int beginning_in_memory
@@ -121,7 +121,7 @@ bool SaveVectorFile(FILE* fd)  // 保存文件信息
 	vector<file>::iterator p = myFileSystem.vector_file.begin();
 	while (p != myFileSystem.vector_file.end())
 	{
-		fprintf(fd, "%d\n%s\n%d\n%s\n%d\n%d\n%s\n", (*p).id, (*p).file_name.c_str(), (*p).beginning_in_dataArea, (*p).owner.c_str(), (*p).file_length, (*p).begining_in_memory, (*p).time.c_str());
+		fprintf(fd, "%d\n%s\n%d\n%s\n%d\n%d\n%s\n", (*p).id, (*p).filename.c_str(), (*p).firstpos, (*p).owner.c_str(), (*p).file_length, (*p).begining_in_memory, (*p).time.c_str());
 		p++;
 	}
 	//cout<<"保存文件信息成功"<<endl;

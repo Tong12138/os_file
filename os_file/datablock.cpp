@@ -80,7 +80,7 @@ void IntoSuperStack(int id)
 
 void ReleaseDataBlock(int index)
 {
-	int temp = myFileSystem.vector_file[index].beginning_in_dataArea;
+	int temp = myFileSystem.vector_file[index].firstpos;
 	dataBlock block = myFileSystem.dataArea[temp];
 	while (1)
 	{
