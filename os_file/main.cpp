@@ -14,49 +14,54 @@ void errorprint(string get) {
 void MainPage()   // 主页信息
 {
 	if (language == 1) {
-		cout << "--------------------------命令行 参数-----------------------------\n";
-		cout << "close filename                关闭文件\n";
-		cout << "copy name des_director_name    复制文件到指定目录（绝对路径）\n";
-		cout << "create filename               建立文件\n";
-		cout << "deldir director_name           删除文件夹\n";
-		cout << "delfile filename              删除文件\n";
-		cout << "dir                          显示当前目录中的子目录和文件\n";
-		cout << "initi                          格式化文件系统\n";
-		cout << "ini director_name              格式化文件夹\n";
-		cout << "logout                         保存结果并退出系统\n";
-		cout << "ltdir                        返回上一级目录\n";
-		cout << "mkdir director_name            建立目录\n";
-		cout << "ntdir director_name          进入下一级目录\n";
-		cout << "open filename                 打开文件\n";
-		cout << "read filename                 读文件\n";
-		cout << "rename old_name new_name     重命名\n";
-		cout << "write filename content        写文件\n";
-		cout << "wrmore filename content time  向文件写入同一内容多次\n";
-		cout << "help                         帮助信息\n";
-		cout << "lan_choose                   change the language\n";
+		cout << "--------------------------Command list-----------------------------\n";
+		cout << "DIR                            查看所有目录和文件\n";
+		cout << "MKDIR <OP>                     创建新目录\n";
+		cout << "DELDIR <OP>                    删除目录\n";
+		cout << "NTDIR <OP>                     进入目录\n";
+		cout << "LTDIR                          返回上级目录\n";
+		cout << "INI <OP>                       格式化文件夹\n";
+
+		cout << "CREATE <OP>                    创建文件\n";
+		cout << "DELFILE <OP>                   删除文件\n";
+		cout << "CLOSE <OP>                     关闭文件\n";
+		cout << "OPEN <OP FILE>                 打开文件\n";
+		cout << "READ <OP>                      读文件\n";
+		cout << "WRITE FILE_NAME CONTENT        写文件\n";
+		cout << "WRMORE FILE_NAME CONTENT TIME  相同内容写入多次\n";
+		cout << "RENAME OLD_NAME NEW_NAME       重命名\n";
+		cout << "COPY NAME DES_DIRECTOR_NAME    复制文件\n";
+
+		cout << "INITI                          格式化文件系统\n";
+		cout << "HELP                           帮助\n";
+		cout << "LAN_CHOOSE                     选择语言\n";
+		cout << "LOGOUT                         登出系统\n";
 	}
 	else
 	{
 		cout << "--------------------------Command list-----------------------------\n";
-		cout << "CLOSE <OP>                     Close the file\n";
-		cout << "COPY NAME DES_DIRECTOR_NAME    Copy files to specified directory (absolute path)\n";
-		cout << "CREATE <OP>                    Create new file\n";
-		cout << "DELDIR <OP>                    Delete folder\n";
-		cout << "DELFILE <OP>                   Delete file\n";
 		cout << "DIR                            Show all file and folder in current index\n";
-		cout << "INITI                          Format current filesystem\n";
-		cout << "INI <OP>                       Format folder\n";
-		cout << "LOGOUT                         Save and logout\n";
-		cout << "LTDIR                          Return to the previous level directory\n";
 		cout << "MKDIR <OP>                     Create new director\n";
+		cout << "DELDIR <OP>                    Delete folder\n";
 		cout << "NTDIR <OP>                     Open director\n";
+		cout << "LTDIR                          Return to the previous level directory\n";
+		cout << "INI <OP>                       Format folder\n";
+
+		cout << "CREATE <OP>                    Create new file\n";
+		cout << "DELFILE <OP>                   Delete file\n";
+		cout << "CLOSE <OP>                     Close the file\n";
 		cout << "OPEN <OP FILE>                 Open file\n";
 		cout << "READ <OP>                      Read file\n";
+		cout << "WRITE FILE_NAME CONTENT        Write specific file\n";
+		cout << "WRMORE FILE_NAME CONTENT TIME  Write the same content to a file multiple times\n";
 		cout << "RENAME OLD_NAME NEW_NAME       Rename\n";
-		cout << "WRITE filename CONTENT        Write specific file\n";
-		cout << "WRMORE filename CONTENT TIME  Write the same content to a file multiple times\n";
+		cout << "COPY NAME DES_DIRECTOR_NAME    Copy files to specified directory (absolute path)\n";
+
+		cout << "INITI                          Format current filesystem\n";
 		cout << "HELP                           Help message\n";
 		cout << "LAN_CHOOSE                     Change the language\n";
+		cout << "LOGOUT                         Save and logout\n";
+
 	}
 }
 
