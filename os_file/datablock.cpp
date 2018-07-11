@@ -4,10 +4,10 @@ void IntoSuperStack()  // free数组进入超级栈
 {
 	for (int i = 0; i<GROUPSIZE; i++) // 成组链中每组个数
 	{
-		int param = MFS.vacant[NextFreeG][i];
+		int cmd = MFS.vacant[NextFreeG][i];
 		// 成组链数组  使用的时候从小到大   被使用了置成-1
 		// 下一组要使用的组数  0~GROUPNUM-1 NextFreeG
-		MFS.superStack.push(param);
+		MFS.superStack.push(cmd);
 		MFS.vacant[NextFreeG][i] = -1;  //正在用的那组置为-1
 	}
 
@@ -26,8 +26,8 @@ StackNum = 0;
 int index=0;
 while(!MFS.superStack.empty())
 {
-int param = MFS.superStack.top();
-MFS.vacant[NextFreeG-1][index] = param;
+int cmd = MFS.superStack.top();
+MFS.vacant[NextFreeG-1][index] = cmd;
 MFS.superStack.pop();
 }
 

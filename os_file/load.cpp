@@ -165,6 +165,7 @@ bool Load(char *s)
 	strcat_s(buff, s);
 	string buffer = buff;
 	//buffer = "D:\MyFileSystem\yyt.txt";
+	path = buffer;
 	if (fopen_s(&fd, buffer.c_str(), "r") != 0)
 	{
 		return false;//未创建文件系统返回false
@@ -173,6 +174,7 @@ bool Load(char *s)
 	{
 		fscanf_s(fd, "%d", &language);
 		fscanf_s(fd, "%d", &UCount);
+		LoadUserInfo(fd);
 		Initialize_Memory();
 		int director_num;
 		fscanf_s(fd, "%d", &director_num);
@@ -180,7 +182,7 @@ bool Load(char *s)
 		int file_num;
 		fscanf_s(fd, "%d", &file_num);
 		LoadVectorFile(fd, file_num);          //加载所有文件信息
-		LoadUserInfo(fd);
+		
 		LoadFreeList(fd);
 		LoadSuperStack(fd);
 		LoadDataArea(fd);

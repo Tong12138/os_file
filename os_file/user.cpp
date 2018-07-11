@@ -224,14 +224,14 @@ bool SignOut()
 		}
 		fprintf(fd, "%d\n\n", language);
 		fprintf(fd, "%d\n\n", UCount);
+		SaveUserInfo(fd);
+		fprintf(fd, "\n");
 		int director_num = MFS.DSV.size();
 		int file_num = MFS.FSV.size();
 		fprintf(fd, "%d\n", director_num);
 		SaveVectorDirector(fd);      //–¥»Îvector_directorƒ⁄»›
 		fprintf(fd, "\n%d\n", file_num);
 		SaveVectorFile(fd);
-		fprintf(fd, "\n");
-		SaveUserInfo(fd);
 		fprintf(fd, "\n");
 		SaveFreeList(fd);
 		fprintf(fd, "\n");

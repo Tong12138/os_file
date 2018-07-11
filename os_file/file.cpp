@@ -428,3 +428,99 @@ bool wrmore(string filename, string content, int time)  // 同一份内容写入多次
 	}
 	return flag;
 }
+
+bool same(string filename1, string filename2)
+{
+	int pos1 = includefile(filename1);
+	if (pos1 == -1)
+	{
+		if (language) {
+			cout << "当前目录不存在 " << filename1 << " 文件" << endl;
+			cout << "读文件失败！" << endl;
+		}
+		else {
+			cout << "The current directory does not exist " << filename1 << " file" << endl;
+			cout << "Failed to read file！" << endl;
+		}
+
+		return false;
+	}
+	int pos2 = includefile(filename2);
+	if (pos2 == -1)
+	{
+		if (language) {
+			cout << "当前目录不存在 " << filename2 << " 文件" << endl;
+			cout << "读文件失败！" << endl;
+		}
+		else {
+			cout << "The current directory does not exist " << filename2 << " file" << endl;
+			cout << "Failed to read file！" << endl;
+		}
+
+		return false;
+	}
+	if (IsInOpenFileList(pos1) == open_FV.end())   // 检查文件是否已打开
+	{
+		if (language) cout << filename1<<"还未打开，无法读取" << endl;
+		else  cout << filename1<<" is not open and cannot be read" << endl;
+		return false;
+	}
+	if (IsInOpenFileList(pos2) == open_FV.end())   // 检查文件是否已打开
+	{
+		if (language) cout << filename2 << "该文件还未打开，无法读取" << endl;
+		else  cout << filename1 << " is not open and cannot be read" << endl;
+		return false;
+	}
+	int count = 0;
+	file temp1 = MFS.FSV[pos1];
+	string file1="",file2="";
+	for (int i = temp1.memorypos; i <= temp1.memorypos + temp1.filelength; i++)
+	{
+		for (int j = 0; j<BLOCKSIZE; j++)
+		{
+			if (memory[i][j] != '\0')
+			{
+				count++;
+				file1+= memory[i][j];
+			}
+			else
+			{
+				break;
+			}
+
+		}
+	}
+	file temp2 = MFS.FSV[pos2];
+	for (int i = temp2.memorypos; i <= temp2.memorypos + temp2.filelength; i++)
+	{
+		for (int j = 0; j<BLOCKSIZE; j++)
+		{
+			if (memory[i][j] != '\0')
+			{
+				count++;
+				file2 += memory[i][j];
+			}
+			else
+			{
+				break;
+			}
+
+		}
+	}
+	//cout << "读完了"<<endl;
+	//cout << endl;
+	//cout << file1<<endl;
+	//cout << file2<<endl;
+	if (file1 == file2)
+	{
+		if (language)cout << "两个文件内容相同 " << endl;
+		else cout << "The content is same " << endl;
+	}
+	else
+	{
+		if (language)cout << "两个文件内容不同 " << endl;
+		else cout << "The content is not same " << endl;
+	}
+
+	return true;
+}

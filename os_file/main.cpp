@@ -140,12 +140,19 @@ void main(int argc,char* argv[])
 		print();
 		Currecdector();   // 显示当前目录
 		cin >> command;
-		string param;
-
+		string cmd;
+		if ((command == "cmp") || (command == "CMP"))
+		{
+			cin >>cmd ;
+			string file2;
+			cin >> file2;
+			same(cmd, file2);
+			continue;
+		}
 		if ((command == "mkdir") || (command == "MKDIR"))
 		{
-			cin >> param;
-			mkdir(param);
+			cin >> cmd;
+			mkdir(cmd);
 			continue;
 		}
 		if ((command == "choosel") || (command == "CHOOSEL")) {
@@ -154,8 +161,8 @@ void main(int argc,char* argv[])
 		}
 		if ((command == "du") || (command == "DU"))
 		{
-			cin >> param;
-			deleteuser(param);
+			cin >> cmd;
+			deleteuser(cmd);
 			continue;
 		}
 		if ((command == "dir") || (command == "DIR"))
@@ -165,9 +172,9 @@ void main(int argc,char* argv[])
 		}
 		if ((command == "cd") || (command == "CD"))
 		{
-			cin >> param;
-			if(param!="..")
-			cd(param);
+			cin >> cmd;
+			if(cmd!="..")
+			cd(cmd);
 			else
 			ltdir();
 			continue;
@@ -180,35 +187,35 @@ void main(int argc,char* argv[])
 		}
 		if ((command == "create") || (command == "CREATE"))
 		{
-			cin >> param;
-			create(param);
+			cin >> cmd;
+			create(cmd);
 			continue;
 		}
 		if ((command == "del") || (command == "DEL"))
 		{
-			cin >> param;
-			delfile(param);
+			cin >> cmd;
+			delfile(cmd);
 			continue;
 		}
 		if ((command == "rmdir") || (command == "RMDIR"))
 		{
-			cin >> param;
-			deldir(param);
+			cin >> cmd;
+			deldir(cmd);
 			continue;
 		}
 		if ((command == "write") || (command == "WRITE"))
 		{
-			cin >> param;
+			cin >> cmd;
 			string temp;
 			//	cin>>temp;
 			cin.get();
 			getline(std::cin, temp);
-			write(param, temp);
+			write(cmd, temp);
 			continue;
 		}
 		if ((command == "wrmore") || (command == "WRMORE"))
 		{
-			cin >> param;
+			cin >> cmd;
 			string temp_1;
 
 			//cin>>temp_1;
@@ -216,25 +223,25 @@ void main(int argc,char* argv[])
 			getline(std::cin, temp_1);
 			int temp_2;
 			cin >> temp_2;
-			wrmore(param, temp_1, temp_2);
+			wrmore(cmd, temp_1, temp_2);
 			continue;
 		}
 		if ((command == "open") || (command == "OPEN"))
 		{
-			cin >> param;
-			open(param);
+			cin >> cmd;
+			open(cmd);
 			continue;
 		}
 		if ((command == "read") || (command == "READ"))
 		{
-			cin >> param;
-			read(param);
+			cin >> cmd;
+			read(cmd);
 			continue;
 		}
 		if ((command == "close") || (command == "CLOSE"))
 		{
-			cin >> param;
-			close(param);
+			cin >> cmd;
+			close(cmd);
 			continue;
 		}
 		if ((command == "logout") || (command == "LOGOUT"))
@@ -251,25 +258,25 @@ void main(int argc,char* argv[])
 		}
 		if ((command == "rename") || (command == "RENAME"))
 		{
-			cin >> param;
+			cin >> cmd;
 			string str;
 			cin >> str;
 
-			rename(param, str);
+			rename(cmd, str);
 			continue;
 		}
 		if ((command == "ini") || (command == "INI"))
 		{
-			cin >> param;
-			initi(param);
+			cin >> cmd;
+			initi(cmd);
 			continue;
 		}
 		if ((command == "copy") || (command == "COPY"))
 		{
-			cin >> param;
+			cin >> cmd;
 			string str;
 			cin >> str;
-			copy(param, str);
+			copy(cmd, str);
 			continue;
 		}
 		if ((command == "help") || (command == "HELP")) {
@@ -342,12 +349,15 @@ void deleteuser(string name) {
 				{
 					MFS.userinfo[i].name = MFS.userinfo[i].name;
 					MFS.userinfo[i].password = MFS.userinfo[i].password;
-					UCount--;
-					if (language)cout << "删除成功:";
-					else cout << "Delete Successful:";
+					
+					
 				}
+				
 			}
 		}
+		UCount--;
+		if (language)cout << "删除成功:";
+		else cout << "Delete Successful:";
 		//MFS.userinfo[UCount++] = add;
 	}
 	else
