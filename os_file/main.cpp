@@ -39,6 +39,7 @@ void MainPage()   // 主页信息
 		//cout << "COLOR                        修改颜色\n";
 		//cout << "COMP                         比较文件内容\n";
 		cout << "TIME                           显示当前时间\n";
+		cout << "DU <NAME>                        删除用户\n";
 
 
 	}
@@ -67,6 +68,7 @@ void MainPage()   // 主页信息
 		cout << "LOGOUT                         Save and logout\n";
 		cout << "CLS                            clear\n";
 		cout << "TIME                           显示当前时间\n";
+		cout << "DU <NAME>                        删除用户\n";
 
 
 	}
@@ -148,6 +150,12 @@ void main(int argc,char* argv[])
 		}
 		if ((command == "choosel") || (command == "CHOOSEL")) {
 			language_change();
+			continue;
+		}
+		if ((command == "du") || (command == "DU"))
+		{
+			cin >> param;
+			deleteuser(param);
 			continue;
 		}
 		if ((command == "dir") || (command == "DIR"))
@@ -322,7 +330,32 @@ void reg(string name, string password) {
 }
 
 void deleteuser(string name) {
-
+	user add;
+	add.name = name;
+	if (CurU.name == "root")
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (name == MFS.userinfo[i].name)
+			{
+				for (i; i < 7; i++)
+				{
+					MFS.userinfo[i].name = MFS.userinfo[i].name;
+					MFS.userinfo[i].password = MFS.userinfo[i].password;
+					UCount--;
+					if (language)cout << "删除成功:";
+					else cout << "Delete Successful:";
+				}
+			}
+		}
+		//MFS.userinfo[UCount++] = add;
+	}
+	else
+	{
+		if (language)cout << "您没有删除该用户的权限:";
+		else cout << "Delete Warning! no priviledge:";
+	}
+	return;
 }
 
 bool rootok() {
