@@ -4,45 +4,45 @@ void IntoSuperStack()  // free数组进入超级栈
 {
 	for (int i = 0; i<GROUPSIZE; i++) // 成组链中每组个数
 	{
-		int param = myFileSystem.free_list[next_free_list_index][i];
+		int param = MFS.vacant[NextFreeG][i];
 		// 成组链数组  使用的时候从小到大   被使用了置成-1
-		// 下一组要使用的组数  0~GROUPNUM-1 next_free_list_index
-		myFileSystem.superStack.push(param);
-		myFileSystem.free_list[next_free_list_index][i] = -1;  //正在用的那组置为-1
+		// 下一组要使用的组数  0~GROUPNUM-1 NextFreeG
+		MFS.superStack.push(param);
+		MFS.vacant[NextFreeG][i] = -1;  //正在用的那组置为-1
 	}
 
-	super_stack_number = GROUPSIZE;
+	StackNum = GROUPSIZE;
 
-	if (next_free_list_index < GROUPNUM)  // 如果没到最后一块就+1
+	if (NextFreeG < GROUPNUM)  // 如果没到最后一块就+1
 	{
-		next_free_list_index++;
+		NextFreeG++;
 	}
 
 }
 /*
 void OutSuperStack()  // 从超级栈进入free数组
 {
-super_stack_number = 0;
+StackNum = 0;
 int index=0;
-while(!myFileSystem.superStack.empty())
+while(!MFS.superStack.empty())
 {
-int param = myFileSystem.superStack.top();
-myFileSystem.free_list[next_free_list_index-1][index] = param;
-myFileSystem.superStack.pop();
+int param = MFS.superStack.top();
+MFS.vacant[NextFreeG-1][index] = param;
+MFS.superStack.pop();
 }
 
-next_free_list_index--;
+NextFreeG--;
 }
 */
-int AllocDataBlock()   //分配数据块
+int allocate()   //分配数据块
 {
-	if (myFileSystem.superStack.empty())
+	if (MFS.superStack.empty())
 	{
 		IntoSuperStack();   // 从free组进入超级栈
 	}
-	int result = myFileSystem.superStack.top();
-	myFileSystem.superStack.pop();
-	super_stack_number--;
+	int result = MFS.superStack.top();
+	MFS.superStack.pop();
+	StackNum--;
 	return result;
 
 }
@@ -51,26 +51,26 @@ int AllocDataBlock()   //分配数据块
 
 void IntoFreeArray()   // 当superstack满了时，进入freeArray
 {
-	next_free_list_index--;
+	NextFreeG--;
 	int index = GROUPSIZE - 1;           // 从栈顶开始，数组从大到小分配
-	while (!myFileSystem.superStack.empty())
+	while (!MFS.superStack.empty())
 	{
-		int temp = myFileSystem.superStack.top();
-		myFileSystem.free_list[next_free_list_index][index] = temp;
-		myFileSystem.superStack.pop();
+		int temp = MFS.superStack.top();
+		MFS.vacant[NextFreeG][index] = temp;
+		MFS.superStack.pop();
 		index--;
 	}
-	super_stack_number = 0;
+	StackNum = 0;
 }
 
 void IntoSuperStack(int id)
 {
-	myFileSystem.dataArea[id].next = -1;
-	myFileSystem.dataArea[id].used = 0;
-	myFileSystem.dataArea[id].content[0] = '\0';
-	myFileSystem.superStack.push(id);
-	super_stack_number++;
-	if (super_stack_number >= GROUPSIZE)  // 当superstack满了时，进入freeArray
+	MFS.dataArea[id].next = -1;
+	MFS.dataArea[id].used = 0;
+	MFS.dataArea[id].content[0] = '\0';
+	MFS.superStack.push(id);
+	StackNum++;
+	if (StackNum >= GROUPSIZE)  // 当superstack满了时，进入freeArray
 	{
 		IntoFreeArray();
 	}
@@ -78,10 +78,10 @@ void IntoSuperStack(int id)
 
 
 
-void ReleaseDataBlock(int index)
+void release(int index)
 {
-	int temp = myFileSystem.vector_file[index].firstpos;
-	dataBlock block = myFileSystem.dataArea[temp];
+	int temp = MFS.FSV[index].blockpos;
+	dataBlock block = MFS.dataArea[temp];
 	while (1)
 	{
 		IntoSuperStack(temp);
@@ -90,7 +90,7 @@ void ReleaseDataBlock(int index)
 		if (block.next != -1)
 		{
 			temp = block.next;
-			block = myFileSystem.dataArea[block.next];
+			block = MFS.dataArea[block.next];
 		}
 		else
 		{
@@ -100,6 +100,6 @@ void ReleaseDataBlock(int index)
 	}
 	{
 		IntoSuperStack(temp);
-		block = myFileSystem.dataArea[block.next];
+		block = MFS.dataArea[block.next];
 	}while (block.next != -1);
 }

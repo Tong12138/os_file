@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-fileSystem myFileSystem;
+fileSystem MFS;
 int memory_index;
 char memory[SYSOPENFILE][BLOCKSIZE];
-int current_director_index;
-int next_free_list_index;
-int super_stack_number;
+int CurD;
+int NextFreeG;
+int StackNum;
 int UCount = 0;
 string path;
 
@@ -22,10 +22,10 @@ void Initialize_dataBlock()  //初始化数据块
 		{
 			temp.content[j] = '\0';//临时变量内容置为0
 		}
-		myFileSystem.dataArea.push_back(temp);//在vector尾部加入数据
+		MFS.dataArea.push_back(temp);//在vector尾部加入数据
 											  //cout<<"每块大小"<<sizeof(temp)<<endl;
 	}
-	//cout<<"数据块数目"<<myFileSystem.dataArea.size()<<endl;
+	//cout<<"数据块数目"<<MFS.dataArea.size()<<endl;
 	//cout<<"初始化数据域成功！"<<endl;
 	return;
 }
@@ -33,18 +33,18 @@ void Initialize_dataBlock()  //初始化数据块
 
 void  Initialize_Index_List()  //初始化成组链
 {
-	next_free_list_index = 0;
-	super_stack_number = 0;
-	while (!myFileSystem.superStack.empty())//如果超级栈不空，将栈内内容全都pop出去
+	NextFreeG = 0;
+	StackNum = 0;
+	while (!MFS.superStack.empty())//如果超级栈不空，将栈内内容全都pop出去
 	{
-		myFileSystem.superStack.pop();
+		MFS.superStack.pop();
 	}
 	for (int i = 0; i<GROUPNUM; i++)
 	{
 		for (int j = GROUPSIZE - 1; j >= 0; j--)
 		{
-			myFileSystem.free_list[i][j] = i * GROUPSIZE + GROUPSIZE - j - 1;
-			//cout<<i<<","<<j<<myFileSystem.free_list[i][j]<<endl;
+			MFS.vacant[i][j] = i * GROUPSIZE + GROUPSIZE - j - 1;
+			//cout<<i<<","<<j<<MFS.vacant[i][j]<<endl;
 		}
 	}
 	//cout<<"初始化成组链成功！"<<endl;
@@ -52,30 +52,30 @@ void  Initialize_Index_List()  //初始化成组链
 }
 
 
-void Initialize_User_Info()   // 初始化用户信息
+void Initialize_userinfo()   // 初始化用户信息
 {
-	myFileSystem.user_info[UCount].name = "root";
-	myFileSystem.user_info[UCount++].password = "123456";
+	MFS.userinfo[UCount].name = "root";
+	MFS.userinfo[UCount++].password = "123456";
 }
 
 
 void Initialize_Vector_Director()   //初始化目录信息
 {
-	myFileSystem.vector_folder.clear();
+	MFS.DSV.clear();
 	folder first;
-	first.last_director = -1;
+	first.father = -1;
 	first.id = 0;
 	first.name = "home";
 	first.owner = "empty";
 	first.time = gettime();
-	myFileSystem.vector_folder.push_back(first);
+	MFS.DSV.push_back(first);
 	//cout<<"初始化目录信息成功!"<<endl;
 }
 
 
 
 
-void Initialize_path()   //初始化根路径
+void Initializerp()   //初始化根路径
 {
 	while (1)
 	{
@@ -140,18 +140,18 @@ void Initialize_Memory()  // 初始化内存
 
 bool Initialize()  // 初始化
 {
-	Initialize_path();        // 初始化根路径
+	Initializerp();        // 初始化根路径
 	try
 	{
 		Initialize_Vector_Director();   // 初始化文件夹信息
 
-		current_director_index = 0;
+		CurD = 0;
 		open_FV.clear();
-		myFileSystem.vector_file.clear();
+		MFS.FSV.clear();
 
 		Initialize_dataBlock();		 // 初始化数据块
 		Initialize_Index_List();		// 初始化成组链
-		Initialize_User_Info();			// 初始化用户信息
+		Initialize_userinfo();			// 初始化用户信息
 		language = 0;
 		if (language) cout << "初始化成功" << endl;
 		else  cout << "Initialization success" << endl;

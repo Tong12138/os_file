@@ -1,11 +1,11 @@
 #include"stdafx.h"
 bool delete_empty_dir(string director_name, int pos)  // 删除空的文件夹
 {
-	vector<int>::iterator p_list = myFileSystem.vector_folder[current_director_index].DV.begin();
-	while (p_list != myFileSystem.vector_folder[current_director_index].DV.end())
+	vector<int>::iterator p_list = MFS.DSV[CurD].DV.begin();
+	while (p_list != MFS.DSV[CurD].DV.end())
 	{
 		int index = *p_list;
-		if (index != -1 && myFileSystem.vector_folder[index].name == director_name)
+		if (index != -1 && MFS.DSV[index].name == director_name)
 		{
 			//current_director.DV.erase(p_list);   // 从当前目录中删除
 			*p_list = -1;   // 标示成不可用
@@ -21,24 +21,24 @@ bool delete_empty_dir(string director_name, int pos)  // 删除空的文件夹
 
 bool delete_not_empty_dir(string director_name, int pos)   // 删除非空文件夹
 {
-	folder temp = myFileSystem.vector_folder[current_director_index];
-	current_director_index = myFileSystem.vector_folder[pos].id;  // 当前目录暂时 进入该文件夹内
+	folder temp = MFS.DSV[CurD];
+	CurD = MFS.DSV[pos].id;  // 当前目录暂时 进入该文件夹内
 
-	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].FV.begin();          // 删除子目录下所有文件
-	while (p != myFileSystem.vector_folder[current_director_index].FV.end())
+	vector<int>::iterator p = MFS.DSV[CurD].FV.begin();          // 删除子目录下所有文件
+	while (p != MFS.DSV[CurD].FV.end())
 	{
 		int index = *p;
-		delfile(myFileSystem.vector_file[index].filename);
+		delfile(MFS.FSV[index].filename);
 		p++;
 	}
 
-	vector<int>::iterator dir_p = myFileSystem.vector_folder[current_director_index].DV.begin();
-	while (dir_p != myFileSystem.vector_folder[current_director_index].DV.end())
+	vector<int>::iterator dir_p = MFS.DSV[CurD].DV.begin();
+	while (dir_p != MFS.DSV[CurD].DV.end())
 	{
-		delete_not_empty_dir(myFileSystem.vector_folder[*dir_p].name, *dir_p);     // 删除非空子目录
+		delete_not_empty_dir(MFS.DSV[*dir_p].name, *dir_p);     // 删除非空子目录
 		dir_p++;
 	}
-	current_director_index = temp.id;  // 回复当前目录
+	CurD = temp.id;  // 回复当前目录
 	delete_empty_dir(director_name, pos);  // 删除已空的文件夹
 
 	return true;
@@ -49,7 +49,7 @@ bool delete_not_empty_dir(string director_name, int pos)   // 删除非空文件夹
 
 bool deldir(string director_name)  // 删除文件夹
 {
-	int pos = IsDirectorInCurrentDirector(director_name);
+	int pos = includedir(director_name);
 	if (pos == -1)
 	{
 		if (language) {
@@ -64,14 +64,14 @@ bool deldir(string director_name)  // 删除文件夹
 		return false;
 	}
 
-	if (myFileSystem.vector_folder[pos].owner != current_user.name && myFileSystem.vector_folder[pos].owner != "empty")
+	if (MFS.DSV[pos].owner != CurU.name && MFS.DSV[pos].owner != "empty")
 	{
 		if (language) cout << "您没有该文件夹的操作权限!" << endl;
 		else cout << "You don't have access to this folder!" << endl;
 		return false;
 	}
 
-	folder temp = myFileSystem.vector_folder[pos];
+	folder temp = MFS.DSV[pos];
 
 	if (temp.FV.empty() && temp.DV.empty())
 	{
@@ -111,23 +111,23 @@ bool delete_empty_dir1(string director_name, int pos);
 
 bool delete_not_empty_dir1(string director_name, int pos)   // 删除非空文件夹
 {
-	folder temp = myFileSystem.vector_folder[current_director_index];			//当前目录值赋给临时目录
-	current_director_index = myFileSystem.vector_folder[pos].id;					//当前目录暂时进入该文件夹内
+	folder temp = MFS.DSV[CurD];			//当前目录值赋给临时目录
+	CurD = MFS.DSV[pos].id;					//当前目录暂时进入该文件夹内
 
-	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].FV.begin();          // 删除子目录下所有文件
-	while (p != myFileSystem.vector_folder[current_director_index].FV.end())
+	vector<int>::iterator p = MFS.DSV[CurD].FV.begin();          // 删除子目录下所有文件
+	while (p != MFS.DSV[CurD].FV.end())
 	{
 		int index = *p;
-		delfile(myFileSystem.vector_file[index].filename);							//删除文件
+		delfile(MFS.FSV[index].filename);							//删除文件
 		p++;
 	}
-	vector<int>::iterator dir_p = myFileSystem.vector_folder[current_director_index].DV.begin();	//定位在目录链表的头结点，赋值给p
-	while (dir_p != myFileSystem.vector_folder[current_director_index].DV.end())				//当指针没有指向链表的末尾
+	vector<int>::iterator dir_p = MFS.DSV[CurD].DV.begin();	//定位在目录链表的头结点，赋值给p
+	while (dir_p != MFS.DSV[CurD].DV.end())				//当指针没有指向链表的末尾
 	{
-		delete_not_empty_dir1(myFileSystem.vector_folder[*dir_p].name, *dir_p);     // 删除非空子目录（递归）
+		delete_not_empty_dir1(MFS.DSV[*dir_p].name, *dir_p);     // 删除非空子目录（递归）
 		dir_p++;
 	}
-	current_director_index = temp.id;  // 回复当前目录（回到当前目录）
+	CurD = temp.id;  // 回复当前目录（回到当前目录）
 	delete_empty_dir1(director_name, pos);  // 删除已空的文件夹
 	return true;
 }
@@ -137,11 +137,11 @@ bool delete_not_empty_dir1(string director_name, int pos)   // 删除非空文件夹
 
 bool delete_empty_dir1(string director_name, int pos)  // 删除空的文件夹
 {
-	vector<int>::iterator p_list = myFileSystem.vector_folder[current_director_index].DV.begin();	//头指针赋给p_list
-	while (p_list != myFileSystem.vector_folder[current_director_index].DV.end())					//指针没有到目录最后一个节点
+	vector<int>::iterator p_list = MFS.DSV[CurD].DV.begin();	//头指针赋给p_list
+	while (p_list != MFS.DSV[CurD].DV.end())					//指针没有到目录最后一个节点
 	{
 		int index = *p_list;
-		if (index != -1 && myFileSystem.vector_folder[index].name == director_name)
+		if (index != -1 && MFS.DSV[index].name == director_name)
 		{
 			//current_director.DV.erase(p_list);   // 从当前目录中删除
 			*p_list = -1;   // 标示成不可用
@@ -154,30 +154,30 @@ bool delete_empty_dir1(string director_name, int pos)  // 删除空的文件夹
 
 bool initi1(string director_name, int pos)   //格式化非空文件夹
 {
-	folder temp = myFileSystem.vector_folder[current_director_index];			//当前目录值赋给临时目录
-	current_director_index = myFileSystem.vector_folder[pos].id;					//当前目录暂时进入该文件夹内
+	folder temp = MFS.DSV[CurD];			//当前目录值赋给临时目录
+	CurD = MFS.DSV[pos].id;					//当前目录暂时进入该文件夹内
 
-	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].FV.begin();          // 删除子目录下所有文件
-	while (p != myFileSystem.vector_folder[current_director_index].FV.end())
+	vector<int>::iterator p = MFS.DSV[CurD].FV.begin();          // 删除子目录下所有文件
+	while (p != MFS.DSV[CurD].FV.end())
 	{
 		int index = *p;
-		delfile(myFileSystem.vector_file[index].filename);							//删除文件
+		delfile(MFS.FSV[index].filename);							//删除文件
 		p++;
 	}
-	vector<int>::iterator dir_p = myFileSystem.vector_folder[current_director_index].DV.begin();	//定位在目录链表的头结点，赋值给p
-	while (dir_p != myFileSystem.vector_folder[current_director_index].DV.end())				//当指针没有指向链表的末尾
+	vector<int>::iterator dir_p = MFS.DSV[CurD].DV.begin();	//定位在目录链表的头结点，赋值给p
+	while (dir_p != MFS.DSV[CurD].DV.end())				//当指针没有指向链表的末尾
 	{
-		delete_not_empty_dir1(myFileSystem.vector_folder[*dir_p].name, *dir_p);     // 删除非空子目录（递归）
+		delete_not_empty_dir1(MFS.DSV[*dir_p].name, *dir_p);     // 删除非空子目录（递归）
 		dir_p++;
 	}
-	current_director_index = temp.id;  // 回复当前目录（回到当前目录）
+	CurD = temp.id;  // 回复当前目录（回到当前目录）
 	return true;
 }
 
 
 bool initi(string director_name)  // 格式化文件夹
 {
-	int pos = IsDirectorInCurrentDirector(director_name);
+	int pos = includedir(director_name);
 	if (pos == -1)
 	{
 		if (language) {
@@ -190,13 +190,13 @@ bool initi(string director_name)  // 格式化文件夹
 		}
 		return false;
 	}
-	if (myFileSystem.vector_folder[pos].owner != current_user.name && myFileSystem.vector_folder[pos].owner != "empty")	//权限
+	if (MFS.DSV[pos].owner != CurU.name && MFS.DSV[pos].owner != "empty")	//权限
 	{
 		if (language) cout << "您没有该文件夹的操作权限!" << endl;
 		else  cout << "You don't have access to this folder!" << endl;
 		return false;
 	}
-	folder temp = myFileSystem.vector_folder[pos];			//
+	folder temp = MFS.DSV[pos];			//
 	if (temp.FV.empty() && temp.DV.empty())
 	{
 		if (language) cout << "格式化成功！" << endl;

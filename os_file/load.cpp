@@ -1,6 +1,7 @@
 #include"stdafx.h"
 #include <stdio.h>
 #include<fstream>
+#include<direct.h>
 // 加载顺序参照 保存的格式
 const int BUFF_LENGTH = 513;
 char change[BUFF_LENGTH];
@@ -16,26 +17,26 @@ bool LoadVectorDirector(FILE* fd, int director_num)  //加载目录信息
 		temp.name = change;
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);   //根目录owner为empty
 		temp.owner = change;
-		fscanf_s(fd, "%d", &temp.last_director);   //根目录上级为-1
+		fscanf_s(fd, "%d", &temp.father);   //根目录上级为-1
 		int direcotor_count;
 		fscanf_s(fd, "%d", &direcotor_count);   //目录数
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);
 		temp.time = change;
 		while (direcotor_count--)       // 载入包含的目录内容
 		{
-			int director_index;
-			fscanf_s(fd, "%d", &director_index);
-			temp.DV.push_back(director_index);
+			int dirpos;
+			fscanf_s(fd, "%d", &dirpos);
+			temp.DV.push_back(dirpos);
 		}
 		int file_count;
 		fscanf_s(fd, "%d", &file_count);
 		while (file_count--)              // 载入包含的文件内容
 		{
-			int file_index;
-			fscanf_s(fd, "%d", &file_index);
-			temp.FV.push_back(file_index);
+			int filepos;
+			fscanf_s(fd, "%d", &filepos);
+			temp.FV.push_back(filepos);
 		}
-		myFileSystem.vector_folder.push_back(temp);
+		MFS.DSV.push_back(temp);
 	}
 	//cout<<"加载目录信息成功！"<<endl;
 	return true;
@@ -49,12 +50,12 @@ bool LoadVectorFile(FILE* fd, int file_num)  //加载文件信息
 		file temp;
 		fscanf_s(fd, "%d%s", &temp.id, change, BUFF_LENGTH);
 		temp.filename = change;
-		fscanf_s(fd, "%d%s", &temp.firstpos, change, BUFF_LENGTH);
+		fscanf_s(fd, "%d%s", &temp.blockpos, change, BUFF_LENGTH);
 		temp.owner = change;
-		fscanf_s(fd, "%d%d", &temp.file_length, &temp.begining_in_memory);
+		fscanf_s(fd, "%d%d", &temp.filelength, &temp.memorypos);
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);
 		temp.time = change;
-		myFileSystem.vector_file.push_back(temp);
+		MFS.FSV.push_back(temp);
 	}
 	//cout<<"加载文件信息成功!"<<endl;
 	return true;
@@ -66,7 +67,7 @@ bool LoadUserInfo(FILE* fd)    // 加载用户信息
 {
 	for (int i = 0; i<UCount; i++)
 	{
-		user* temp = &myFileSystem.user_info[i];
+		user* temp = &MFS.userinfo[i];
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);
 		(*temp).name = change;
 		fscanf_s(fd, "%s", change, BUFF_LENGTH);
@@ -82,8 +83,8 @@ bool LoadFreeList(FILE* fd)   // 加载成组链
 	{
 		for (int j = 0; j<GROUPSIZE; j++)
 		{
-			fscanf_s(fd, "%d", &myFileSystem.free_list[i][j]);
-			//cout<<"读入了"<<myFileSystem.free_list[i][j]<<endl;
+			fscanf_s(fd, "%d", &MFS.vacant[i][j]);
+			//cout<<"读入了"<<MFS.vacant[i][j]<<endl;
 		}
 	}
 	//cout<<"加载成组链信息成功!"<<endl;
@@ -92,13 +93,13 @@ bool LoadFreeList(FILE* fd)   // 加载成组链
 
 bool LoadSuperStack(FILE* fd)  // 加载超级栈信息
 {
-	fscanf_s(fd, "%d %d", &next_free_list_index, &super_stack_number);
-	int temp = super_stack_number;
+	fscanf_s(fd, "%d %d", &NextFreeG, &StackNum);
+	int temp = StackNum;
 	while (temp--)
 	{
 		int value;
 		fscanf_s(fd, "%d", &value);
-		myFileSystem.superStack.push(value);
+		MFS.superStack.push(value);
 	}
 	//cout<<"加载超级栈信息成功!"<<endl;
 	return true;
@@ -133,7 +134,7 @@ bool LoadDataArea(FILE* fd)  //加载数据域信息
 				}
 			}
 			//cout<<"内容"<<change<<endl;
-			myFileSystem.dataArea.push_back(*temp);
+			MFS.dataArea.push_back(*temp);
 		}
 		catch (const std::exception&)
 		{
@@ -146,19 +147,25 @@ bool LoadDataArea(FILE* fd)  //加载数据域信息
 	return true;
 }
 
-/*void Initialize_path() {
+/*void Initializerp() {
 
 }*/
 
-bool Load()
+bool Load(char *s)
 {
 	string text;
-	fstream in;
-	in.open(guide, ios::in | ios::out | ios::binary);
-	in >> path;
-	in.close();
+	//fstream in;
+	//in.open(guide, ios::in | ios::out | ios::binary);
+	//in >> path;
+	//in.close();
 	FILE* fd;
-	if (fopen_s(&fd, path.c_str(), "r") != 0)
+	char buff[80];
+	_getcwd(buff, 80);
+	strcat_s(buff, "\\");
+	strcat_s(buff, s);
+	string buffer = buff;
+	//buffer = "D:\MyFileSystem\yyt.txt";
+	if (fopen_s(&fd, buffer.c_str(), "r") != 0)
 	{
 		return false;//未创建文件系统返回false
 	}
@@ -177,7 +184,7 @@ bool Load()
 		LoadFreeList(fd);
 		LoadSuperStack(fd);
 		LoadDataArea(fd);
-		current_director_index = 0;
+		CurD = 0;
 		memory_index = 0;
 
 		if (language)cout << "加载文件系统成功!" << endl;

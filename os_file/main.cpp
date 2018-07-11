@@ -17,13 +17,12 @@ void MainPage()   // 主页信息
 		cout << "--------------------------Command list-----------------------------\n";
 		cout << "DIR                            查看所有目录和文件\n";
 		cout << "MKDIR <OP>                     创建新目录\n";
-		cout << "DELDIR <OP>                    删除目录\n";
-		cout << "NTDIR <OP>                     进入目录\n";
-		cout << "LTDIR                          返回上级目录\n";
-		cout << "INI <OP>                       格式化文件夹\n";
+		cout << "RMDIR <OP>                     删除目录\n";
+		cout << "CD <OP>                        进入目录\n";
+		cout << "FORMAT <OP>                    格式化文件夹\n";
 
 		cout << "CREATE <OP>                    创建文件\n";
-		cout << "DELFILE <OP>                   删除文件\n";
+		cout << "DEL <OP>                       删除文件\n";
 		cout << "CLOSE <OP>                     关闭文件\n";
 		cout << "OPEN <OP FILE>                 打开文件\n";
 		cout << "READ <OP>                      读文件\n";
@@ -34,21 +33,26 @@ void MainPage()   // 主页信息
 
 		cout << "INITI                          格式化文件系统\n";
 		cout << "HELP                           帮助\n";
-		cout << "LAN_CHOOSE                     选择语言\n";
+		cout << "CHOOSEL                        选择语言\n";
 		cout << "LOGOUT                         登出系统\n";
+		cout<<"CLS                              清屏\n";
+		//cout << "COLOR                        修改颜色\n";
+		//cout << "COMP                         比较文件内容\n";
+		cout << "TIME                           显示当前时间\n";
+
+
 	}
 	else
 	{
 		cout << "--------------------------Command list-----------------------------\n";
 		cout << "DIR                            Show all file and folder in current index\n";
 		cout << "MKDIR <OP>                     Create new director\n";
-		cout << "DELDIR <OP>                    Delete folder\n";
-		cout << "NTDIR <OP>                     Open director\n";
-		cout << "LTDIR                          Return to the previous level directory\n";
-		cout << "INI <OP>                       Format folder\n";
+		cout << "RMDIR <OP>                     Delete folder\n";
+		cout << "CD <OP>                        Open director\n";
+		cout << "FORMAT <OP>                    Format folder\n";
 
 		cout << "CREATE <OP>                    Create new file\n";
-		cout << "DELFILE <OP>                   Delete file\n";
+		cout << "DEL <OP>                       Delete file\n";
 		cout << "CLOSE <OP>                     Close the file\n";
 		cout << "OPEN <OP FILE>                 Open file\n";
 		cout << "READ <OP>                      Read file\n";
@@ -59,41 +63,44 @@ void MainPage()   // 主页信息
 
 		cout << "INITI                          Format current filesystem\n";
 		cout << "HELP                           Help message\n";
-		cout << "LAN_CHOOSE                     Change the language\n";
+		cout << "CHOOSEL                        Change the language\n";
 		cout << "LOGOUT                         Save and logout\n";
+		cout << "CLS                            clear\n";
+		cout << "TIME                           显示当前时间\n";
+
 
 	}
 }
 
-void CurrentDirector()   // 显示当前目录
+void Currecdector()   // 显示当前目录
 {
 	stack<int> temp;
-	folder temp_director = myFileSystem.vector_folder[current_director_index];
-	while (temp_director.last_director != -1)
+	folder temp_director = MFS.DSV[CurD];
+	while (temp_director.father != -1)
 	{
 		temp.push(temp_director.id);
-		temp_director = myFileSystem.vector_folder[temp_director.last_director];
+		temp_director = MFS.DSV[temp_director.father];
 	}
 	temp.push(temp_director.id);
 	while (!temp.empty())
 	{
 		int index = temp.top();
-		cout << myFileSystem.vector_folder[index].name << ">";
+		cout << MFS.DSV[index].name << ">";
 		temp.pop();
 	}
 	//cout<<"$";
 }
 
-void main()
+void main(int argc,char* argv[])
 {
-	//Initialize_path();
+	//Initializerp();
 	string command;
 	char ch;
 	cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
 
 	while (1)
 	{
-		if (Load()) {
+		if (Load(argv[1])) {
 			break;
 		}
 		else {
@@ -103,12 +110,12 @@ void main()
 		print();
 	}
 
-	if (LoginIn())
+	if (SignIn())
 	{
 		system("cls");
 		cout << "Microsoft Windows[version 10.0.16299.431]" << endl << "(c) 2017 Microsoft Copreration.All rights reserved" << endl << endl;
-		if (language)cout << "登录成功，欢迎您," << current_user.name << endl;
-		else cout << "Login success, welcome you," << current_user.name << endl;
+		if (language)cout << "登录成功，欢迎您," << CurU.name << endl;
+		else cout << "Login success, welcome you," << CurU.name << endl;
 	}
 	else
 	{
@@ -129,7 +136,7 @@ void main()
 	{
 
 		print();
-		CurrentDirector();   // 显示当前目录
+		Currecdector();   // 显示当前目录
 		cin >> command;
 		string param;
 
@@ -139,7 +146,7 @@ void main()
 			mkdir(param);
 			continue;
 		}
-		if ((command == "lan_choose") || (command == "LAN_CHOOSE")) {
+		if ((command == "choosel") || (command == "CHOOSEL")) {
 			language_change();
 			continue;
 		}
@@ -148,15 +155,19 @@ void main()
 			dir();
 			continue;
 		}
-		if ((command == "ntdir") || (command == "NTDIR"))
+		if ((command == "cd") || (command == "CD"))
 		{
 			cin >> param;
-			ntdir(param);
+			if(param!="..")
+			cd(param);
+			else
+			ltdir();
 			continue;
 		}
-		if ((command == "ltdir") || (command == "LTDIR"))
+		if ((command == "time") || (command == "TIME"))
 		{
-			ltdir();
+			string cur_time = gettime();
+			cout << cur_time << endl;
 			continue;
 		}
 		if ((command == "create") || (command == "CREATE"))
@@ -165,13 +176,13 @@ void main()
 			create(param);
 			continue;
 		}
-		if ((command == "delfile") || (command == "DELFILE"))
+		if ((command == "del") || (command == "DEL"))
 		{
 			cin >> param;
 			delfile(param);
 			continue;
 		}
-		if ((command == "deldir") || (command == "DELDIR"))
+		if ((command == "rmdir") || (command == "RMDIR"))
 		{
 			cin >> param;
 			deldir(param);
@@ -220,12 +231,12 @@ void main()
 		}
 		if ((command == "logout") || (command == "LOGOUT"))
 		{
-			LoginOut();
+			SignOut();
 			system("pause");
 			exit(0);
 		}
 		bool initi(string director_name);  // 格式化文件夹
-		if ((command == "initi") || (command == "INITI"))
+		if ((command == "format") || (command == "FORMAT"))
 		{
 			Initialize();
 			continue;
@@ -259,6 +270,11 @@ void main()
 		}
 		if ((command == "root") || (command == "ROOT")) {
 			root();
+			continue;
+		}
+		if ((command == "cls") || (command == "CLS"))
+		{
+			system("cls");
 			continue;
 		}
 		errorprint(command);
@@ -302,7 +318,7 @@ void reg(string name, string password) {
 	user add;
 	add.name = name;
 	add.password = password;
-	myFileSystem.user_info[UCount++] = add;
+	MFS.userinfo[UCount++] = add;
 }
 
 void deleteuser(string name) {
@@ -370,6 +386,6 @@ void root() {
 	}
 	if (language)cout << "输入错误已超过五次，将强制退出系统" << endl;
 	else cout << "The input error has been exceeded five times and the system will be forced out" << endl;
-	LoginOut();
+	SignOut();
 	return;
 }

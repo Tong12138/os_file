@@ -31,7 +31,7 @@ bool ParsePath(string path)  // °ÑÂ·¾¶½âÎö³öÀ´
 			}
 			else
 			{
-				if (!ntdir(director))  //µ½ÏÂÒ»Ä¿Â¼
+				if (!cd(director))  //µ½ÏÂÒ»Ä¿Â¼
 				{
 					if (language)cout << "ÎŞ·¨µ½´ï " << accessed << " Â·¾¶ÏÂµÄ " << director << " ÎÄ¼ş¼Ğ" << endl;
 					else cout << "Cannot reach " << accessed << " under the path of " << director << " folder" << endl;
@@ -47,7 +47,7 @@ bool ParsePath(string path)  // °ÑÂ·¾¶½âÎö³öÀ´
 		ending++;
 	}
 	string director = path.substr(begin, ending - begin);
-	if (!ntdir(director))
+	if (!cd(director))
 	{
 		if (language)cout << "ÎŞ·¨µ½´ï " << accessed << " Â·¾¶ÏÂµÄ " << director << " ÎÄ¼ş¼Ğ" << endl;
 		else cout << "Cannot reach " << accessed << " under the path of " << director << " folder" << endl;
@@ -63,16 +63,16 @@ void CopyDirector(int pos, int limit)   //¸´ÖÆpos´¦µÄÄ¿Â¼
 										//limitÊÇÎªÁË·ÀÖ¹ ĞÂ½¨µÄÄ¿Â¼±»ÖØ¸´ĞÂ½¨ Èç¹û·¢ÏÖÒªĞÂ½¨µÄÄ¿Â¼Ë÷Òı´óÓÚ»òµÈÓÚ
 										//limit¾Í²»ÓÃÔÙĞÂ½¨ÁË
 {
-	//°Ñpos´¦Ä¿Â¼°üº¬µÄËùÓĞÎÄ¼ş¼ĞÈ«²¿ĞÂ½¨£¬¸üĞÂlast_director
+	//°Ñpos´¦Ä¿Â¼°üº¬µÄËùÓĞÎÄ¼ş¼ĞÈ«²¿ĞÂ½¨£¬¸üĞÂfather
 
-	folder current = myFileSystem.vector_folder[pos];
+	folder current = MFS.DSV[pos];
 	folder temp;
-	temp.id = myFileSystem.vector_folder.size();
+	temp.id = MFS.DSV.size();
 
 	temp.name = current.name;
 	temp.owner = current.owner;
 	temp.time = gettime();
-	temp.last_director = current_director_index;   //¸üĞÂlast_director
+	temp.father = CurD;   //¸üĞÂfather
 
 	vector<int>::iterator p = current.FV.begin();  //ÎÄ¼şµÄË÷ÒıÏàÍ¬  
 	while (p != current.FV.end())
@@ -81,9 +81,9 @@ void CopyDirector(int pos, int limit)   //¸´ÖÆpos´¦µÄÄ¿Â¼
 		p++;
 	}
 
-	myFileSystem.vector_folder[current_director_index].DV.push_back(temp.id);  // ÔÚµ±Ç°Ä¿Â¼ÖĞ¼ÓÈëĞÂµÄÄ¿Â¼
-	myFileSystem.vector_folder.push_back(temp);//ÔÚÄ¿Â¼ĞÅÏ¢ÖĞ¼ÓÈëĞÂµÄÄ¿Â¼
-	current_director_index = temp.id;	//¸üĞÂµ±Ç°Ä¿Â¼
+	MFS.DSV[CurD].DV.push_back(temp.id);  // ÔÚµ±Ç°Ä¿Â¼ÖĞ¼ÓÈëĞÂµÄÄ¿Â¼
+	MFS.DSV.push_back(temp);//ÔÚÄ¿Â¼ĞÅÏ¢ÖĞ¼ÓÈëĞÂµÄÄ¿Â¼
+	CurD = temp.id;	//¸üĞÂµ±Ç°Ä¿Â¼
 
 	p = current.DV.begin();  // ÔÚµ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼ÖĞ¼ÌĞø¸´ÖÆ
 	while (p != current.DV.end())
@@ -99,12 +99,12 @@ void CopyDirector(int pos, int limit)   //¸´ÖÆpos´¦µÄÄ¿Â¼
 
 bool copy(string name, string path)
 {
-	int strore_director = current_director_index;  //Ôİ´æ
-	current_director_index = 0;
-	int pos = IsFileInCurrentDirector(name);
+	int strore_director = CurD;  //Ôİ´æ
+	CurD = 0;
+	int pos = includefile(name);
 	if (pos == -1)
 	{
-		pos = IsDirectorInCurrentDirector(name);
+		pos = includedir(name);
 		if (pos == -1)
 		{
 			if (language) {
@@ -119,7 +119,7 @@ bool copy(string name, string path)
 		}
 		else// ¸´ÖÆµÄÊÇÎÄ¼ş¼Ğ
 		{
-			if (myFileSystem.vector_folder[pos].owner != current_user.name && myFileSystem.vector_folder[pos].owner != "empty")//ÑéÖ¤È¨ÏŞ
+			if (MFS.DSV[pos].owner != CurU.name && MFS.DSV[pos].owner != "empty")//ÑéÖ¤È¨ÏŞ
 			{
 				if (language) {
 					cout << "ÄúÃ»ÓĞ²Ù×÷ " << name << " ÎÄ¼ş¼ĞµÄÈ¨ÏŞ" << endl;
@@ -139,14 +139,14 @@ bool copy(string name, string path)
 				else cout << "Duplicate failure!" << endl;
 				return false;
 			}
-			CopyDirector(pos, myFileSystem.vector_folder.size());
+			CopyDirector(pos, MFS.DSV.size());
 
 
 		}
 	}
 	else  // ¸´ÖÆµÄÊÇÎÄ¼ş
 	{
-		if (myFileSystem.vector_file[pos].owner != current_user.name && myFileSystem.vector_file[pos].owner != "empty")//ÑéÖ¤È¨ÏŞ
+		if (MFS.FSV[pos].owner != CurU.name && MFS.FSV[pos].owner != "empty")//ÑéÖ¤È¨ÏŞ
 		{
 			if (language) {
 				cout << "ÄúÃ»ÓĞ²Ù×÷ " << name << " ÎÄ¼ş¼ĞµÄÈ¨ÏŞ" << endl;
@@ -166,22 +166,22 @@ bool copy(string name, string path)
 			else cout << "Duplicate failure!" << endl;
 			return false;
 		}
-		myFileSystem.vector_folder[current_director_index].FV.push_back(pos);     //ÔÚ¸ÃÄ¿Â¼ÏÂÌí¼Ó¶ÔÓ¦ÎÄ¼şµÄË÷Òı¼´¿É
+		MFS.DSV[CurD].FV.push_back(pos);     //ÔÚ¸ÃÄ¿Â¼ÏÂÌí¼Ó¶ÔÓ¦ÎÄ¼şµÄË÷Òı¼´¿É
 	}
 
 	if (language)cout << "¸´ÖÆ³É¹¦£¡" << endl;
 	else cout << "Duplicate success!" << endl;
-	current_director_index = strore_director;  //»Ö¸´µ±Ç°Ä¿Â¼
+	CurD = strore_director;  //»Ö¸´µ±Ç°Ä¿Â¼
 	return true;
 }
 
 
-bool IsNameInCurrentDirector(string name)  // ÅĞ¶ÏÒ»¸öÃû×ÖÊÇ·ñÔÚµ±Ç°Ä¿Â¼ÖĞ³öÏÖ °üÀ¨ ÎÄ¼şºÍÄ¿Â¼
+bool IsNameInCurrecdector(string name)  // ÅĞ¶ÏÒ»¸öÃû×ÖÊÇ·ñÔÚµ±Ç°Ä¿Â¼ÖĞ³öÏÖ °üÀ¨ ÎÄ¼şºÍÄ¿Â¼
 {
-	int pos = IsFileInCurrentDirector(name);
+	int pos = includefile(name);
 	if (pos == -1)   // Ãû×Ö²»ÔÚÎÄ¼şÖĞ
 	{
-		pos = IsDirectorInCurrentDirector(name);
+		pos = includedir(name);
 		if (pos == -1)     //Ãû×Ö²»ÔÚÄ¿Â¼ÖĞ
 		{
 			return false;   // Ãû×Ö²»ÔÚµ±Ç°Ä¿Â¼
@@ -193,7 +193,7 @@ bool IsNameInCurrentDirector(string name)  // ÅĞ¶ÏÒ»¸öÃû×ÖÊÇ·ñÔÚµ±Ç°Ä¿Â¼ÖĞ³öÏÖ °
 
 bool rename(string old_name, string new_name)  // ÖØÃüÃû
 {
-	if (IsNameInCurrentDirector(new_name) == true)
+	if (IsNameInCurrecdector(new_name) == true)
 	{
 		if (language) {
 			cout << "ĞÂÃû×ÖÔÚµ±Ç°Ä¿Â¼ÖĞÒÑ´æÔÚ£¬ÎŞ·¨ÖØĞÂÃüÃû" << endl;
@@ -207,20 +207,20 @@ bool rename(string old_name, string new_name)  // ÖØÃüÃû
 		return false;
 	}
 
-	int pos = IsFileInCurrentDirector(old_name);
+	int pos = includefile(old_name);
 	if (pos != -1)  // Èç¹ûÒªÖØÃüÃûµÄÊÇÎÄ¼ş
 	{
-		myFileSystem.vector_file[pos].filename = new_name;
+		MFS.FSV[pos].filename = new_name;
 		if (language) cout << "ÖØÃüÃû³É¹¦£¡" << endl;
 		else  cout << "Rename success£¡" << endl;
 		return true;
 	}
 	else
 	{
-		pos = IsDirectorInCurrentDirector(old_name);
+		pos = includedir(old_name);
 		if (pos != -1)  // ÖØÃüÃûµÄÊÇÎÄ¼ş¼Ğ
 		{
-			myFileSystem.vector_folder[pos].name = new_name;
+			MFS.DSV[pos].name = new_name;
 			if (language) cout << "ÖØÃüÃû³É¹¦£¡" << endl;
 			else  cout << "Rename success£¡" << endl;
 			return true;

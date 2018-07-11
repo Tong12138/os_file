@@ -2,7 +2,7 @@
 void mkdir(string director_name)    // 创建目录
 {
 
-	if (IsFileInCurrentDirector(director_name) != -1)
+	if (includefile(director_name) != -1)
 	{
 		if (language) {
 			cout << "本目录中已存在名为 " << director_name << " 的文件" << endl;
@@ -15,7 +15,7 @@ void mkdir(string director_name)    // 创建目录
 		return;
 	}
 
-	int pos = IsDirectorInCurrentDirector(director_name);
+	int pos = includedir(director_name);
 	if (pos != -1)
 	{
 		if (language) {
@@ -34,14 +34,14 @@ void mkdir(string director_name)    // 创建目录
 
 	folder temp;
 	temp.name = director_name;
-	temp.last_director = current_director_index;
-	temp.owner = current_user.name;
-	temp.id = myFileSystem.vector_folder.size();
+	temp.father = CurD;
+	temp.owner = CurU.name;
+	temp.id = MFS.DSV.size();
 	temp.time = gettime();
-	myFileSystem.vector_folder.push_back(temp);
+	MFS.DSV.push_back(temp);
 	/*
-	list<int>::iterator p = myFileSystem.vector_director[current_director_index].DV.begin();
-	while(p != myFileSystem.vector_director[current_director_index].DV.end())
+	list<int>::iterator p = MFS.vector_director[CurD].DV.begin();
+	while(p != MFS.vector_director[CurD].DV.end())
 	{
 	int index = *p;
 	if(index == -1)
@@ -52,23 +52,23 @@ void mkdir(string director_name)    // 创建目录
 	}
 	}
 	*/
-	myFileSystem.vector_folder[current_director_index].DV.push_back(temp.id);
+	MFS.DSV[CurD].DV.push_back(temp.id);
 	if (language) cout << "创建目录 " << director_name << " 成功" << endl;
 	else  cout << "Create a folder " << director_name << " success" << endl;
 	return;
 }
 
-bool ntdir(string director_name)
+bool cd(string director_name)
 {
-	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].DV.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].DV.end())
+	vector<int>::iterator p = MFS.DSV[CurD].DV.begin();
+	while (p != MFS.DSV[CurD].DV.end())
 	{
 		int index = *p;
-		if (myFileSystem.vector_folder[index].name == director_name) // 检查目录名
+		if (MFS.DSV[index].name == director_name) // 检查目录名
 		{
-			if (myFileSystem.vector_folder[index].owner == current_user.name || myFileSystem.vector_folder[index].owner == "empty")//检查权限
+			if (MFS.DSV[index].owner == CurU.name || MFS.DSV[index].owner == "empty")//检查权限
 			{
-				current_director_index = index;
+				CurD = index;
 				return true;
 			}
 			else
@@ -88,10 +88,10 @@ bool ntdir(string director_name)
 
 void ltdir()  // 前往上一级目录
 {
-	int index = myFileSystem.vector_folder[current_director_index].last_director;
+	int index = MFS.DSV[CurD].father;
 	if (index != -1)
 	{
-		current_director_index = index;
+		CurD = index;
 	}
 	else
 	{

@@ -1,11 +1,11 @@
 #include "stdafx.h"
-int IsFileInCurrentDirector(string filename)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â¼µÄ×ÓÎÄ¼şÖĞ  Èô´æÔÚ·µ»Ø¶ÔÓ¦Ë÷ÒıºÅ ²»´æÔÚ·µ»Ø-1
+int includefile(string filename)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â¼µÄ×ÓÎÄ¼şÖĞ  Èô´æÔÚ·µ»Ø¶ÔÓ¦Ë÷ÒıºÅ ²»´æÔÚ·µ»Ø-1
 {
-	vector<int>::iterator p = myFileSystem.vector_folder[current_director_index].FV.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].FV.end())
+	vector<int>::iterator p = MFS.DSV[CurD].FV.begin();
+	while (p != MFS.DSV[CurD].FV.end())
 	{
 		int index = *p;
-		if (index != -1 && myFileSystem.vector_file[index].filename == filename)
+		if (index != -1 && MFS.FSV[index].filename == filename)
 		{
 
 			return index;
@@ -16,16 +16,16 @@ int IsFileInCurrentDirector(string filename)   // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚÓÚµ±Ç°Ä¿Â¼
 	return -1;
 }
 
-int IsDirectorInCurrentDirector(string filename)  // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚµÄµ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼ÖĞ
+int includedir(string filename)  // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚµÄµ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼ÖĞ
 {
 	bool flag = false;
 	vector<int>::iterator p;
 
-	p = myFileSystem.vector_folder[current_director_index].DV.begin();
-	while (p != myFileSystem.vector_folder[current_director_index].DV.end())
+	p = MFS.DSV[CurD].DV.begin();
+	while (p != MFS.DSV[CurD].DV.end())
 	{
 		int index = *p;
-		if (index != -1 && myFileSystem.vector_folder[index].name == filename)
+		if (index != -1 && MFS.DSV[index].name == filename)
 		{
 
 			return index;
@@ -37,7 +37,7 @@ int IsDirectorInCurrentDirector(string filename)  // ÅĞ¶ÏÒ»ÎÄ¼şÃûÊÇ·ñ´æÔÚµÄµ±Ç°Ä
 
 bool IsDataAreaFull()   // ÅĞ¶ÏÊı¾İÓòÊÇ·ñÒÑÂú
 {
-	if (myFileSystem.superStack.empty() && myFileSystem.free_list[GROUPNUM - 1][0] == -1)
+	if (MFS.superStack.empty() && MFS.vacant[GROUPNUM - 1][0] == -1)
 	{
 		return true;
 	}
@@ -49,7 +49,7 @@ bool IsDataAreaFull()   // ÅĞ¶ÏÊı¾İÓòÊÇ·ñÒÑÂú
 
 bool create(string filename)         // ´´½¨ÎÄ¼ş
 {
-	if (IsFileInCurrentDirector(filename) != -1)
+	if (includefile(filename) != -1)
 	{
 		if (language) {
 			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << filename << " µÄÎÄ¼ş" << endl;
@@ -63,7 +63,7 @@ bool create(string filename)         // ´´½¨ÎÄ¼ş
 		return false;
 	}
 
-	if (IsDirectorInCurrentDirector(filename) != -1)
+	if (includedir(filename) != -1)
 	{
 		if (language) {
 			cout << "±¾Ä¿Â¼ÖĞÒÑ´æÔÚÃûÎª " << filename << " µÄÎÄ¼ş¼Ğ" << endl;
@@ -86,23 +86,23 @@ bool create(string filename)         // ´´½¨ÎÄ¼ş
 	}
 
 	file temp;
-	temp.id = myFileSystem.vector_file.size();
-	temp.file_length = 1;
-	temp.owner = current_user.name;
+	temp.id = MFS.FSV.size();
+	temp.filelength = 1;
+	temp.owner = CurU.name;
 	temp.filename = filename;
-	temp.begining_in_memory = 0;
+	temp.memorypos = 0;
 	temp.time = gettime();
-	temp.firstpos = AllocDataBlock();
-	if (language) cout << "¸ÃÎÄ¼ş±»·ÖÅäµÄÊı¾İ¿éºÅÊÇ: " << temp.firstpos << endl;
-	else  cout << "The data block number that the file is assigned is: " << temp.firstpos << endl;
-	myFileSystem.vector_file.push_back(temp);
-	myFileSystem.vector_folder[current_director_index].FV.push_back(temp.id);
+	temp.blockpos = allocate();
+	if (language) cout << "¸ÃÎÄ¼ş±»·ÖÅäµÄÊı¾İ¿éºÅÊÇ: " << temp.blockpos << endl;
+	else  cout << "The data block number that the file is assigned is: " << temp.blockpos << endl;
+	MFS.FSV.push_back(temp);
+	MFS.DSV[CurD].FV.push_back(temp.id);
 	return true;
 }
 
 bool close(string filename)
 {
-	int pos = IsFileInCurrentDirector(filename);
+	int pos = includefile(filename);
 
 	if (pos == -1)
 	{
@@ -121,8 +121,8 @@ bool close(string filename)
 		return false;
 	}
 
-	file temp = myFileSystem.vector_file[pos];
-	for (int i = temp.begining_in_memory; i <= temp.begining_in_memory + temp.file_length; i++)
+	file temp = MFS.FSV[pos];
+	for (int i = temp.memorypos; i <= temp.memorypos + temp.filelength; i++)
 	{
 		for (int j = 0; j<BLOCKSIZE; j++)
 		{
@@ -147,7 +147,7 @@ bool close(string filename)
 bool delfile(string filename) //É¾³ıÎÄ¼ş
 {
 
-	int pos = IsFileInCurrentDirector(filename);
+	int pos = includefile(filename);
 	if (pos == -1)
 	{
 		if (language) cout << "µ±Ç°Ä¿Â¼ÖĞ²»°üº¬¸ÃÎÄ¼ş£¬É¾³ıÊ§°Ü" << endl;
@@ -155,31 +155,31 @@ bool delfile(string filename) //É¾³ıÎÄ¼ş
 		return false;
 	}
 
-	if (myFileSystem.vector_file[pos].owner != current_user.name && myFileSystem.vector_file[pos].owner != "empty")
+	if (MFS.FSV[pos].owner != CurU.name && MFS.FSV[pos].owner != "empty")
 	{
 		if (language) cout << "ÄúÃ»ÓĞ¸ÃÎÄ¼ş¼ĞµÄ²Ù×÷È¨ÏŞ!" << endl;
 		else  cout << "You don't have access to this folder!" << endl;
 		return false;
 	}
 
-	vector<int>::iterator p_list = myFileSystem.vector_folder[current_director_index].FV.begin();
-	while (p_list != myFileSystem.vector_folder[current_director_index].FV.end())
+	vector<int>::iterator p_list = MFS.DSV[CurD].FV.begin();
+	while (p_list != MFS.DSV[CurD].FV.end())
 	{
 		int index = *p_list;
-		if (index != -1 && myFileSystem.vector_file[index].filename == filename)
+		if (index != -1 && MFS.FSV[index].filename == filename)
 		{
 			*p_list = -1;   // ±êÊ¾Îª²»¿ÉÓÃ
-			ReleaseDataBlock(index);
+			release(index);
 			break;
 		}
 		p_list++;
 	}
 
-	//myFileSystem.vector_director[current_director.id] = current_director;  // ¸üĞÂÄ¿Â¼Ë÷Òı
-	//vector<file>::iterator p = myFileSystem.vector_file.begin();
+	//MFS.vector_director[current_director.id] = current_director;  // ¸üĞÂÄ¿Â¼Ë÷Òı
+	//vector<file>::iterator p = MFS.FSV.begin();
 	//p += pos;
 	//(*p).id = -1;      //±êÊ¾Îª²»¿ÉÓÃ
-	//myFileSystem.vector_file.erase(p);  // ´ÓÎÄ¼şË÷ÒıÖĞÉ¾³ı
+	//MFS.FSV.erase(p);  // ´ÓÎÄ¼şË÷ÒıÖĞÉ¾³ı
 	if (language) cout << "É¾³ıÎÄ¼ş " << filename << " ³É¹¦" << endl;
 	else  cout << "Delete the file " << filename << " success" << endl;
 	return true;
@@ -187,7 +187,7 @@ bool delfile(string filename) //É¾³ıÎÄ¼ş
 
 bool open(string filename)
 {
-	int pos = IsFileInCurrentDirector(filename);
+	int pos = includefile(filename);
 	if (pos == -1)
 	{
 		if (language) {
@@ -202,14 +202,14 @@ bool open(string filename)
 		return false;
 	}
 
-	if (myFileSystem.vector_file[pos].owner != current_user.name && myFileSystem.vector_file[pos].owner != "empty")
+	if (MFS.FSV[pos].owner != CurU.name && MFS.FSV[pos].owner != "empty")
 	{
 		if (language)cout << "ÄúÃ»ÓĞ¸ÃÎÄ¼şµÄ²Ù×÷È¨ÏŞ!" << endl;
 		else cout << "You do not have access to this file!" << endl;
 		return false;
 	}
 
-	if (myFileSystem.vector_file[pos].file_length > SYSOPENFILE - memory_index)  // Ê£ÓàÎÄ¼ş¿é²»¹»×°ÔØÒª´ò¿ªµÄÎÄ¼ş
+	if (MFS.FSV[pos].filelength > SYSOPENFILE - memory_index)  // Ê£ÓàÎÄ¼ş¿é²»¹»×°ÔØÒª´ò¿ªµÄÎÄ¼ş
 	{
 		if (language)cout << "ÄÚ´æ¿Õ¼ä²»×ã£¬ÎŞ·¨¶ÁÈë " << filename << " ÄÚÈİ,Çë¹Ø±ÕÎŞÓÃÎÄ¼ş" << endl;
 		else cout << "Insufficient memory space, unable to read in " << filename << " Please close useless files" << endl;
@@ -225,12 +225,12 @@ bool open(string filename)
 	}
 
 	openFile temp;
-	temp.file_index = pos;
-	temp.director_index = current_director_index;
+	temp.filepos = pos;
+	temp.dirpos = CurD;
 	open_FV.push_back(temp);       // ¼ÓÈë´ò¿ªÎÄ¼şÁ´±í
 
-	int block_pos = myFileSystem.vector_file[pos].firstpos;
-	myFileSystem.vector_file[pos].begining_in_memory = memory_index; // Éè¶¨ÆğÊ¼Î»ÖÃ
+	int block_pos = MFS.FSV[pos].blockpos;
+	MFS.FSV[pos].memorypos = memory_index; // Éè¶¨ÆğÊ¼Î»ÖÃ
 	dataBlock block;
 	int count = 0;
 
@@ -238,7 +238,7 @@ bool open(string filename)
 	{
 		if (block_pos != -1)
 		{
-			block = myFileSystem.dataArea[block_pos];
+			block = MFS.dataArea[block_pos];
 			if (language)cout << "ÄÚ´æ¶ÁÈë:";
 			else cout << "Memory read:";
 			for (int i = 0; i<block.used; i++)    // ¶ÁÊı¾İ¿éÄÚÈİµ½ÄÚ´æ
@@ -277,7 +277,7 @@ list<openFile>::iterator IsInOpenFileList(int pos)   // posË÷ÒıµÄÎÄ¼şÊÇ·ñÔÚ´ò¿ªÎ
 	list<openFile>::iterator p = open_FV.begin();
 	while (p != open_FV.end())
 	{
-		int index = (*p).file_index;
+		int index = (*p).filepos;
 		if (index == pos)
 		{
 			return p;
@@ -289,7 +289,7 @@ list<openFile>::iterator IsInOpenFileList(int pos)   // posË÷ÒıµÄÎÄ¼şÊÇ·ñÔÚ´ò¿ªÎ
 
 bool read(string filename)
 {
-	int pos = IsFileInCurrentDirector(filename);
+	int pos = includefile(filename);
 	if (pos == -1)
 	{
 		if (language) {
@@ -312,8 +312,8 @@ bool read(string filename)
 	}
 
 	int count = 0;
-	file temp = myFileSystem.vector_file[pos];
-	for (int i = temp.begining_in_memory; i <= temp.begining_in_memory + temp.file_length; i++)
+	file temp = MFS.FSV[pos];
+	for (int i = temp.memorypos; i <= temp.memorypos + temp.filelength; i++)
 	{
 		for (int j = 0; j<BLOCKSIZE; j++)
 		{
@@ -338,7 +338,7 @@ bool read(string filename)
 
 bool write(string filename, string content)
 {
-	int pos = IsFileInCurrentDirector(filename);
+	int pos = includefile(filename);
 	if (pos == -1)
 	{
 		if (language) {
@@ -355,12 +355,12 @@ bool write(string filename, string content)
 
 	if (content != "")  // Ğ´ÈëµÄÄÚÈİ²»¿ÕÊ±
 	{
-		int block_pos = myFileSystem.vector_file[pos].firstpos;
-		dataBlock* block = &myFileSystem.dataArea[block_pos];
+		int block_pos = MFS.FSV[pos].blockpos;
+		dataBlock* block = &MFS.dataArea[block_pos];
 		while ((*block).next != -1)            // ÕÒµ½×îºóÒ»¿éÊı¾İ¿é ¿ªÊ¼Ğ´ÄÚÈİ
 		{
 			block_pos = (*block).next;
-			block = &myFileSystem.dataArea[block_pos];
+			block = &MFS.dataArea[block_pos];
 		}
 
 
@@ -379,11 +379,11 @@ bool write(string filename, string content)
 
 				}
 				(*block).content[(*block).used] = '\0';
-				block_pos = AllocDataBlock();
+				block_pos = allocate();
 				(*block).next = block_pos;
 				if (block_pos != -1)
 				{
-					block = &myFileSystem.dataArea[block_pos];  // ÔÙ·ÖÅä¿é¿Õ¼ä
+					block = &MFS.dataArea[block_pos];  // ÔÙ·ÖÅä¿é¿Õ¼ä
 				}
 				else
 				{

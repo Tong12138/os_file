@@ -3,28 +3,28 @@
 #include <sstream>
 void dir()
 {
-	vector<int>::iterator director_p = myFileSystem.vector_folder[current_director_index].DV.begin();
+	vector<int>::iterator director_p = MFS.DSV[CurD].DV.begin();
 	cout << endl << "<DIR LIST>:" << endl;
-	while (director_p != myFileSystem.vector_folder[current_director_index].DV.end())
+	while (director_p != MFS.DSV[CurD].DV.end())
 	{
 		int index = *director_p;
 		if (index != -1)      // 如果可用
 		{
-			cout << '\t' << myFileSystem.vector_folder[index].time << "\t<DIR>" << '\t' << "name: " << myFileSystem.vector_folder[index].name << '\t' << "owner: ";
-			cout << myFileSystem.vector_folder[index].owner << endl;
+			cout << '\t' << MFS.DSV[index].time << "\t<DIR>" << '\t' << "name: " << MFS.DSV[index].name << '\t' << "owner: ";
+			cout << MFS.DSV[index].owner << endl;
 		}
 		director_p++;
 	}
 	cout << endl;
-	vector<int>::iterator file_p = myFileSystem.vector_folder[current_director_index].FV.begin();
+	vector<int>::iterator file_p = MFS.DSV[CurD].FV.begin();
 	cout << "<FILE LIST>:" << endl;
-	while (file_p != myFileSystem.vector_folder[current_director_index].FV.end())
+	while (file_p != MFS.DSV[CurD].FV.end())
 	{
 		int index = *file_p;
 		if (index != -1)  //如果可用
 		{
-			cout << '\t' << myFileSystem.vector_file[index].time << "\t<FILE>" << '\t' << "name: " << myFileSystem.vector_file[index].filename << '\t' << "owner: ";
-			cout << myFileSystem.vector_file[index].owner << endl;
+			cout << '\t' << MFS.FSV[index].time << "\t<FILE>" << '\t' << "name: " << MFS.FSV[index].filename << '\t' << "owner: ";
+			cout << MFS.FSV[index].owner << endl;
 		}
 		file_p++;
 	}

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include<fstream>
 
-user current_user;
+user CurU;
 
 bool CheckUser(string name, string password) // 检查该用户是否是初始化的用户
 {
 	for (int i = 0; i<USERNUM; i++)
 	{
-		if (myFileSystem.user_info[i].name == name && myFileSystem.user_info[i].password == password)
+		if (MFS.userinfo[i].name == name && MFS.userinfo[i].password == password)
 		{
 			return true;
 		}
@@ -16,7 +16,7 @@ bool CheckUser(string name, string password) // 检查该用户是否是初始化的用户
 	return false;
 }//denglu
 
-bool LoginIn()    //登录模块
+bool SignIn()    //登录模块
 {
 
 	int chance = 5;
@@ -32,8 +32,8 @@ bool LoginIn()    //登录模块
 		cin >> password;
 		if (CheckUser(name, password))
 		{
-			current_user.name = name;
-			current_user.password = password;
+			CurU.name = name;
+			CurU.password = password;
 			return true;
 		}
 		else
@@ -54,10 +54,10 @@ bool LoginIn()    //登录模块
  /* 保存格式
  1. vector_director的个数
  2.vector_director的内容
- 3.vector_file的个数
- 4.vector_file的内容
- 5.user_info内容
- 6.free_list内容  编号有小到大
+ 3.FSV的个数
+ 4.FSV的内容
+ 5.userinfo内容
+ 6.vacant内容  编号有小到大
  7.super_stack内容
  8.data_area内容
  */
@@ -68,7 +68,7 @@ bool LoginIn()    //登录模块
  1.int id
  2.char* name
  3.char* owner
- 4.int last_director
+ 4.int father
  5.int director数目
  6.int DV
  7.int file数目
@@ -76,14 +76,14 @@ bool LoginIn()    //登录模块
  */
 bool SaveVectorDirector(FILE* fd)  //保存目录信息
 {
-	vector<folder>::iterator p = myFileSystem.vector_folder.begin();//返回一个迭代器，指向第一个元素
+	vector<folder>::iterator p = MFS.DSV.begin();//返回一个迭代器，指向第一个元素
 
-	while (p != myFileSystem.vector_folder.end())
+	while (p != MFS.DSV.end())
 	{
 		int director_num = (*p).DV.size();
 		int file_num = (*p).FV.size();
 
-		fprintf(fd, "%d\n%s\n%s\n%d\n%d\n%s\n", (*p).id, (*p).name.c_str(), (*p).owner.c_str(), (*p).last_director, director_num, (*p).time.c_str());
+		fprintf(fd, "%d\n%s\n%s\n%d\n%d\n%s\n", (*p).id, (*p).name.c_str(), (*p).owner.c_str(), (*p).father, director_num, (*p).time.c_str());
 
 		vector<int>::iterator p_list = (*p).DV.begin();  // 写入DV
 		while (p_list != (*p).DV.end())
@@ -111,17 +111,17 @@ bool SaveVectorDirector(FILE* fd)  //保存目录信息
 /*保存格式
 1.int id
 2.char* filename
-3.int firstpos
+3.int blockpos
 4.char* owner
-5.int file_length
+5.int filelength
 6.int beginning_in_memory
 */
 bool SaveVectorFile(FILE* fd)  // 保存文件信息
 {
-	vector<file>::iterator p = myFileSystem.vector_file.begin();
-	while (p != myFileSystem.vector_file.end())
+	vector<file>::iterator p = MFS.FSV.begin();
+	while (p != MFS.FSV.end())
 	{
-		fprintf(fd, "%d\n%s\n%d\n%s\n%d\n%d\n%s\n", (*p).id, (*p).filename.c_str(), (*p).firstpos, (*p).owner.c_str(), (*p).file_length, (*p).begining_in_memory, (*p).time.c_str());
+		fprintf(fd, "%d\n%s\n%d\n%s\n%d\n%d\n%s\n", (*p).id, (*p).filename.c_str(), (*p).blockpos, (*p).owner.c_str(), (*p).filelength, (*p).memorypos, (*p).time.c_str());
 		p++;
 	}
 	//cout<<"保存文件信息成功"<<endl;
@@ -133,7 +133,7 @@ bool SaveUserInfo(FILE* fd)  // 保存用户信息
 
 	for (int i = 0; i<UCount; i++)
 	{
-		user temp = myFileSystem.user_info[i];
+		user temp = MFS.userinfo[i];
 		fprintf(fd, "%s\n%s\n", temp.name.c_str(), temp.password.c_str());
 	}
 	//cout<<"保存用户信息成功"<<endl;
@@ -148,7 +148,7 @@ bool SaveFreeList(FILE* fd)  //保存成组链
 	{
 		for (int j = 0; j<GROUPSIZE; j++)
 		{
-			fprintf(fd, "%d\n", myFileSystem.free_list[i][j]);
+			fprintf(fd, "%d\n", MFS.vacant[i][j]);
 		}
 	}
 	//cout<<"保存成组链成功"<<endl;
@@ -158,20 +158,20 @@ bool SaveFreeList(FILE* fd)  //保存成组链
 
 
 /*
-1. int next_free_list_index;   // 下一组要使用的组数  0~GROUPNUM-1
-2. int super_stack_number;     // 超级栈中可以使用的块数
+1. int NextFreeG;   // 下一组要使用的组数  0~GROUPNUM-1
+2. int StackNum;     // 超级栈中可以使用的块数
 3. int 栈中内容 逆序
 */
 
 bool SaveSuperStack(FILE* fd)  // 保存超级栈
 {
 	stack<int> temp;
-	fprintf(fd, "%d\n%d\n", next_free_list_index, super_stack_number);
-	while (!myFileSystem.superStack.empty())   // 将内容保存到另一个栈中，逆序保存，这样加载的时候顺序才对
+	fprintf(fd, "%d\n%d\n", NextFreeG, StackNum);
+	while (!MFS.superStack.empty())   // 将内容保存到另一个栈中，逆序保存，这样加载的时候顺序才对
 	{
-		int top = myFileSystem.superStack.top();
+		int top = MFS.superStack.top();
 		temp.push(top);
-		myFileSystem.superStack.pop();
+		MFS.superStack.pop();
 	}
 	while (!temp.empty())
 	{
@@ -190,7 +190,7 @@ bool SaveDataArea(FILE* fd) //保存数据域内容
 	for (int i = 0; i<BLOCKNUM; i++)
 	{
 		int is_null = 1;    // 做个标记，1表示内容是空，0表示非空
-		dataBlock temp = myFileSystem.dataArea[i];
+		dataBlock temp = MFS.dataArea[i];
 		if (temp.content[0] != '\0')       // 如果非空，做上标记
 		{
 			is_null = 0;
@@ -205,7 +205,7 @@ bool SaveDataArea(FILE* fd) //保存数据域内容
 	return true;
 }
 
-bool LoginOut()
+bool SignOut()
 {
 	FILE* out;
 	if (fopen_s(&out, guide.c_str(), "w+") != 0) {
@@ -224,8 +224,8 @@ bool LoginOut()
 		}
 		fprintf(fd, "%d\n\n", language);
 		fprintf(fd, "%d\n\n", UCount);
-		int director_num = myFileSystem.vector_folder.size();
-		int file_num = myFileSystem.vector_file.size();
+		int director_num = MFS.DSV.size();
+		int file_num = MFS.FSV.size();
 		fprintf(fd, "%d\n", director_num);
 		SaveVectorDirector(fd);      //写入vector_director内容
 		fprintf(fd, "\n%d\n", file_num);
